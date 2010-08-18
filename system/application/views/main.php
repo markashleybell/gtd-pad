@@ -331,6 +331,7 @@ $(function(){
         var frm = $(this).parent().parent();
         frm.hide();
         frm.parent().children('.content').show();
+        return false;
         
     });
     
