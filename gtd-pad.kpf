@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="213ad84d-04b3-43cc-bfd7-2485f7090f7f" kpf_version="4" name="gtd-pad.kpf">
+<livefolder id="21ce3b79-c394-4d79-a87e-4c2fd5983cb3" idref="213ad84d-04b3-43cc-bfd7-2485f7090f7f" name="gtd-pad" url="">
+</livefolder>
+<preference-set idref="213ad84d-04b3-43cc-bfd7-2485f7090f7f">
+  <boolean id="import_live">0</boolean>
+</preference-set>
+</project>
