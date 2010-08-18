@@ -7,7 +7,7 @@
 | These details are used in emails sent by authentication library.
 |--------------------------------------------------------------------------
 */
-$config['website_name'] = 'BPClone';
+$config['website_name'] = 'GTD-Pad';
 $config['webmaster_email'] = 'me@markashleybell.com';
 
 /*

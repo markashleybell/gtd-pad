@@ -38,9 +38,9 @@ $active_group = "default";
 $active_record = TRUE;
 
 $db['default']['hostname'] = "localhost";
-$db['default']['username'] = "markb_bpclone";
+$db['default']['username'] = "markb_gtd_pad";
 $db['default']['password'] = "todo1978";
-$db['default']['database'] = "markb_bpclone";
+$db['default']['database'] = "markb_gtd_pad";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = TRUE;
