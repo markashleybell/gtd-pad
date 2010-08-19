@@ -58,8 +58,14 @@ var itemControlsHtml = '<span class="controls">' +
                        '    <a href="#" class="control-delete">Delete<\/a>' +
                        '    <a href="#" class="control-edit">Edit<\/a>' +
                        '    <a href="#" class="control-move">Move<\/a>' +
-                       '    <input type="checkbox" id="check-[{ID}]" name="check-[{ID}]" value="1" \/>' +
                        '<\/span>';
+
+var listitemControlsHtml = '<span class="controls">' +
+                           '    <a href="#" class="control-delete">Delete<\/a>' +
+                           '    <a href="#" class="control-edit">Edit<\/a>' +
+                           '    <a href="#" class="control-move">Move<\/a>' +
+                           '    <input type="checkbox" id="check-[{ID}]" name="check-[{ID}]" value="1" \/>' +
+                           '<\/span>';
 
 $(function(){
         
@@ -176,7 +182,7 @@ $(function(){
                 {	
                     // We're just editing the title of a list
                     html += insertHtml(listFormHtml, 'edit-item-' + data.id, 'item-edit-form') + '<div class="content"><h2>' + form.find('input[name=title]').val() + '<\/h2><\/div>';
-                    html += '<ul><li id="listitem-' + data.itemid + '">' + insertHtml(itemControlsHtml, data.itemid, '') + '<div class="content">' + autoLink(form.find('input[name=listitem]').val()) + '<\/div>';
+                    html += '<ul><li id="listitem-' + data.itemid + '">' + insertHtml(listitemControlsHtml, data.itemid, '') + '<div class="content">' + autoLink(form.find('input[name=listitem]').val()) + '<\/div>';
                     html += insertHtml(itemFormHtml, 'edit-listitem-' + data.itemid, 'listitem-edit-form') + '<\/li><\/ul>';
                     html += insertHtml(itemFormHtml, 'add-listitem-to-' + data.id, 'listitem-add-form');
                     html += insertHtml(addItemHtml, 'add-listitem-to-' + data.id + '-addlink', 'control-new-list-item');
@@ -268,7 +274,7 @@ $(function(){
             success: function(data, status, request) { 
                 
                 var ul = form.parent().find('ul');
-                ul.append('<li id="listitem-' + data.id + '">' + insertHtml(itemControlsHtml, data.id, '') + '<div class="content">' + autoLink(form.find('input[name=item]').val()) + '<\/div>' + insertHtml(itemFormHtml, 'edit-item-' + data.id, 'item-edit-form') + '<\/li>');
+                ul.append('<li id="listitem-' + data.id + '">' + insertHtml(listitemControlsHtml, data.id, '') + '<div class="content">' + autoLink(form.find('input[name=item]').val()) + '<\/div>' + insertHtml(itemFormHtml, 'edit-item-' + data.id, 'listitem-edit-form') + '<\/li>');
                 
                 ul.sortable('refresh');
                 
@@ -318,12 +324,23 @@ $(function(){
     
     $('.item ul').sortable({
         handle: '.control-move',
-        update: updateListItemOrder
+        update: updateListItemOrder,
+        connectWith: ['.item ul']
     });
     
     $('#page-nav ul').sortable({
         handle: '.control-move',
         update: updatePageOrder
+    });
+    
+    $('.control-move').live('click', function() {
+        
+        // TODO: Somehow hide the deit form if move is dragged?
+        // $(this).parent().parent().children('form').hide();
+        // $(this).parent().parent().children('.content').show();
+        
+        return false;
+        
     });
     
     $('.hideparent').live('click', function() {
@@ -359,6 +376,8 @@ $(function(){
     $('#control-delete').bind('click', function() {
         
         $(this).closest('form').submit();
+        
+        return false;
         
     });
     
@@ -430,8 +449,10 @@ function updateItemOrder()
 
 function updateListItemOrder()
 {
-
     var data = [];
+    
+    // Update the item's list id in case it's been dropped from another list
+    data.push('parentid=' + $(this).parent().attr('id').split('-')[1]);
     
     $(this).find('li').each(function(index){
         data.push('item[]=' + $(this).attr('id').split('-')[1]);

@@ -275,7 +275,8 @@ class Main extends Controller {
         {
             // For our first record, $i is 0, and $id is 2.
             $data = array(
-                'displayorder' => (($i + 1) * 100)
+                'displayorder' => (($i + 1) * 100),
+                'itemid' => $_POST['parentid']
             );
             
             $this->db->update('listitem', $data, array('id' => $id));
