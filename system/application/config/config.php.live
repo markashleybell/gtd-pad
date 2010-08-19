@@ -231,7 +231,7 @@ $config['encryption_key'] = "";
 | 'time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name'] = 'bpclone_session'; 
+$config['sess_cookie_name'] = 'gtd_pad_session'; 
 $config['sess_expiration'] = 0;
 $config['sess_encrypt_cookie'] = FALSE;
 $config['sess_table_name'] = 'tankauth_sessions';
@@ -240,7 +240,7 @@ $config['sess_match_useragent'] = TRUE;
 // [OB] additional config items: Set to 'database' to keep userdata exclusively on server database.
 $config['sess_storage'] = 'database';
 // [OB] additional config items: You can leave these as defaults for a standard session
-$config['sess_data_cookie'] = 'bpclone_session_data';
+$config['sess_data_cookie'] = 'gtd_pad_session_data';
 $config['sess_database'] = 'default';
 $config['sess_timeout'] = 0; 
 $config['sess_destroy_on_timeout'] = FALSE; 
