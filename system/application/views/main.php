@@ -6,20 +6,29 @@
             
             body, h1, h2, h3, p, ul, ol, li, form, blockquote { margin:0; padding:0; }
             
-            body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; background-color: #999; }
             
-            #container { width: 900px; margin: 0 auto; overflow: visible; }
-            #header { width: 900px; background-color: #000000; overflow: auto; }
+            #container { width: 740px; margin: 0 auto; overflow: visible; }
+            #header { width: 740px; background-color: #000000; overflow: auto; }
             #header a { color: #fff; }
             #admin-nav { float: right; }
-            .page { width: 600px; float: left; background-color: #e0e0e0; }
-            #page-nav { width: 300px; float: right; background-color: #999999; }
+            .page { width: 570px; float: left; background-color: #fff; }
+            #page-nav { width: 170px; float: right; background-color: #999999; }
             
             .item ul, #page-nav ul { list-style: none; }
             
             .item, li, .control-new-list-item { clear: left; }
             
-            .controls { background-color: #ff0000; width: 120px; float: left; margin-left: -120px; }
+            .item {  margin-left: -60px; }
+            .control-new-list-item { margin-left: 160px; }
+            
+            .controls { background-color: #ff0000; width: 60px; float: left; height: 16px; }
+            .controls a { display: block; float: right; font-family: Verdana; }
+            .control-delete { text-indent: -100em; margin: 0 0 0 0; width: 10px; height: 11px; background: url(/img/site/trash.gif) 0 0 no-repeat; }
+            .control-edit { margin: 0 0 0 0; font-size: 11px; height: 10px;  }
+            .control-move { margin: 0 0 0 0; text-indent: -100em; width: 10px; height: 11px; background: url(/img/site/drag_handle.gif) 0 0 no-repeat; }
+            
+            .item .content { margin-left: 60px; }
 
             .check { float: left; }
             
@@ -65,15 +74,15 @@ var itemFormHtml = '<form id="[{ID}]" class="[{CLASS}]" action="/main/update_lis
 var addItemHtml = '<id="[{ID}]" class="[{CLASS}]"><a href="#">Add Item<\/a><\/span>';
 
 var itemControlsHtml = '<div class="controls">' +
-                       '    <a href="#" class="control-delete">Delete<\/a>' +
-                       '    <a href="#" class="control-edit">Edit<\/a>' +
                        '    <a href="#" class="control-move">Move<\/a>' +
+                       '    <a href="#" class="control-edit">Edit<\/a>' +
+                       '    <a href="#" class="control-delete">Delete<\/a>' +
                        '<\/div>';
 
 var listitemControlsHtml = '<div class="controls">' +
-                           '    <a href="#" class="control-delete">Delete<\/a>' +
-                           '    <a href="#" class="control-edit">Edit<\/a>' +
                            '    <a href="#" class="control-move">Move<\/a>' +
+                           '    <a href="#" class="control-edit">Edit<\/a>' +
+                           '    <a href="#" class="control-delete">Delete<\/a>' +
                            '<\/div>' + 
                            '<input class="check" type="checkbox" id="check-[{ID}]" name="check-[{ID}]" value="1" \/>';
 
@@ -564,9 +573,9 @@ function autoLink(input)
             ?>
                 <div id="item-<?=$item->id?>" class="item">
                     <div class="controls">
-                        <a href="#" class="control-delete">Delete</a>
-                        <a href="#" class="control-edit">Edit</a>
                         <a href="#" class="control-move">Move</a>
+                        <a href="#" class="control-edit">Edit</a>
+                        <a href="#" class="control-delete">Delete</a>
                     </div>
                     <?
                     // if it's a list
@@ -592,9 +601,9 @@ function autoLink(input)
                                 ?>
                                 <li id="listitem-<?=$li->id?>">
                                     <div class="controls">
-                                        <a href="#" class="control-delete">Delete</a>
-                                        <a href="#" class="control-edit">Edit</a>
                                         <a href="#" class="control-move">Move</a>
+                                        <a href="#" class="control-edit">Edit</a>
+                                        <a href="#" class="control-delete">Delete</a>
                                     </div>
                                     <input class="check" type="checkbox" id="check-<?=$li->id?>" name="check-<?=$li->id?>" value="1" />
                                     <div class="content"><?=$li->item?></div>
