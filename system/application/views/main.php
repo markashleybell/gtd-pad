@@ -8,18 +8,19 @@
             
             body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
             
-            #container { width: 900px; margin: 0 auto; overflow: auto; }
+            #container { width: 900px; margin: 0 auto; overflow: visible; }
             #header { width: 900px; background-color: #000000; overflow: auto; }
             #header a { color: #fff; }
             #admin-nav { float: right; }
             .page { width: 600px; float: left; background-color: #e0e0e0; }
             #page-nav { width: 300px; float: right; background-color: #999999; }
             
+            .item ul, #page-nav ul { list-style: none; }
             
             .item, li, .control-new-list-item { clear: left; }
             
-            .controls { background-color: #ff0000; width: 150px; float: left; }
-            
+            .controls { background-color: #ff0000; width: 120px; float: left; margin-left: -120px; }
+
             .check { float: left; }
             
         </style>
