@@ -1,10 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
     <head>
-        <title><?=$page->title?> - BpClone</title>
+        <title><?=$page->title?> - GTD-Pad</title>
         <style type="text/css">
             
-            body { font-family: Arial, Helvetica, sans-serif; }
+            body, h1, h2, h3, p, ul, ol, li, form, blockquote { margin:0; padding:0; }
+            
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
             
             #container { width: 900px; margin: 0 auto; overflow: auto; }
             #header { width: 900px; background-color: #000000; overflow: auto; }
@@ -12,6 +14,13 @@
             #admin-nav { float: right; }
             .page { width: 600px; float: left; background-color: #e0e0e0; }
             #page-nav { width: 300px; float: right; background-color: #999999; }
+            
+            
+            .item, li, .control-new-list-item { clear: left; }
+            
+            .controls { background-color: #ff0000; width: 150px; float: left; }
+            
+            .check { float: left; }
             
         </style>
         <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -52,20 +61,20 @@ var itemFormHtml = '<form id="[{ID}]" class="[{CLASS}]" action="/main/update_lis
                    '    <input type="submit" value="Save" \/> <a href="#" class="hideparent">Close</a><\/p>' +
                    '<\/form>';
 
-var addItemHtml = '<span id="[{ID}]" class="[{CLASS}]"><a href="#">Add Item<\/a><\/span>';
+var addItemHtml = '<id="[{ID}]" class="[{CLASS}]"><a href="#">Add Item<\/a><\/span>';
 
-var itemControlsHtml = '<span class="controls">' +
+var itemControlsHtml = '<div class="controls">' +
                        '    <a href="#" class="control-delete">Delete<\/a>' +
                        '    <a href="#" class="control-edit">Edit<\/a>' +
                        '    <a href="#" class="control-move">Move<\/a>' +
-                       '<\/span>';
+                       '<\/div>';
 
-var listitemControlsHtml = '<span class="controls">' +
+var listitemControlsHtml = '<div class="controls">' +
                            '    <a href="#" class="control-delete">Delete<\/a>' +
                            '    <a href="#" class="control-edit">Edit<\/a>' +
                            '    <a href="#" class="control-move">Move<\/a>' +
-                           '    <input type="checkbox" id="check-[{ID}]" name="check-[{ID}]" value="1" \/>' +
-                           '<\/span>';
+                           '<\/div>' + 
+                           '<input class="check" type="checkbox" id="check-[{ID}]" name="check-[{ID}]" value="1" \/>';
 
 $(function(){
         
@@ -347,7 +356,7 @@ $(function(){
         
         var frm = $(this).parent().parent();
         frm.hide();
-        frm.parent().children('.content').show();
+        frm.parent().children('.content, .control-new-list-item').show();
         return false;
         
     });
@@ -392,7 +401,7 @@ $(function(){
             dataType: 'json',
             type: 'POST',
             success: function(data, status, request) {
-                cb.parent().parent().remove();
+                cb.parent().remove();
             },
             error: function(request, status, error) { alert(status); }
         });
@@ -585,8 +594,8 @@ function autoLink(input)
                                         <a href="#" class="control-delete">Delete</a>
                                         <a href="#" class="control-edit">Edit</a>
                                         <a href="#" class="control-move">Move</a>
-                                        <input type="checkbox" id="check-<?=$li->id?>" name="check-<?=$li->id?>" value="1" />
                                     </div>
+                                    <input class="check" type="checkbox" id="check-<?=$li->id?>" name="check-<?=$li->id?>" value="1" />
                                     <div class="content"><?=$li->item?></div>
                                     <form id="edit-listitem-<?=$li->id?>" class="listitem-edit-form" action="/main/update_listitem/" method="post">
                                         <p><textarea name="item"><?=$li->item?></textarea>
