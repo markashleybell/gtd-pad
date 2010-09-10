@@ -6,29 +6,30 @@
             
             body, h1, h2, h3, p, ul, ol, li, form, blockquote { margin:0; padding:0; }
             
-            body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; background-color: #999; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 16px; background-color: #E5E5E5; }
             
             #container { width: 740px; margin: 0 auto; overflow: visible; }
             #header { width: 740px; background-color: #000000; overflow: auto; }
             #header a { color: #fff; }
             #admin-nav { float: right; }
             .page { width: 570px; float: left; background-color: #fff; }
-            #page-nav { width: 170px; float: right; background-color: #999999; }
+            #page-nav { width: 170px; float: right; background-color: #E5E5E5; }
             
-            .item ul, #page-nav ul { list-style: none; }
+            .item ul, #page-nav ul { list-style: none; overflow: auto; }
             
             .item, li, .control-new-list-item { clear: left; }
             
-            .item {  margin-left: -60px; }
-            .control-new-list-item { margin-left: 160px; }
+            .item {  margin-left: -80px; }
+            .page > .controls {  margin-left: -80px; }
+            .control-new-list-item { margin-left: 100px; }
             
-            .controls { background-color: #ff0000; width: 60px; float: left; height: 16px; }
+            .controls { background: url(/img/site/nubbin.gif) 0 0 no-repeat; width: 80px; float: left; height: 16px; }
             .controls a { display: block; float: right; font-family: Verdana; }
-            .control-delete { text-indent: -100em; margin: 0 0 0 0; width: 10px; height: 11px; background: url(/img/site/trash.gif) 0 0 no-repeat; }
-            .control-edit { margin: 0 0 0 0; font-size: 11px; height: 10px;  }
-            .control-move { margin: 0 0 0 0; text-indent: -100em; width: 10px; height: 11px; background: url(/img/site/drag_handle.gif) 0 0 no-repeat; }
+            .control-delete { text-indent: -100em; margin: 0 10px 0 0; width: 10px; height: 11px; background: url(/img/site/trash.gif) 0 0 no-repeat; }
+            .control-edit { margin: 0 10px 0 0; font-size: 11px; height: 10px;  }
+            .control-move { cursor: move; margin: 0 10px 0 0; text-indent: -100em; width: 10px; height: 11px; background: url(/img/site/drag_handle.gif) 0 0 no-repeat; }
             
-            .item .content { margin-left: 60px; }
+            .item .content { margin-left: 80px; }
 
             .check { float: left; }
             
@@ -71,7 +72,7 @@ var itemFormHtml = '<form id="[{ID}]" class="[{CLASS}]" action="/main/update_lis
                    '    <input type="submit" value="Save" \/> <a href="#" class="hideparent">Close</a><\/p>' +
                    '<\/form>';
 
-var addItemHtml = '<id="[{ID}]" class="[{CLASS}]"><a href="#">Add Item<\/a><\/span>';
+var addItemHtml = '<span id="[{ID}]" class="[{CLASS}]"><a href="#">Add Item<\/a><\/span>';
 
 var itemControlsHtml = '<div class="controls">' +
                        '    <a href="#" class="control-move">Move<\/a>' +
@@ -282,6 +283,8 @@ $(function(){
     });
     
     $('.listitem-add-form').live('submit', function() {
+        
+        console.log('test');
         
         var form = $(this);
 
