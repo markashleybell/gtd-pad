@@ -8,36 +8,39 @@
             
             body { font-family: Arial, Helvetica, sans-serif; font-size: 16px; background-color: #E5E5E5; }
             
-            #container { width: 740px; margin: 0 auto; overflow: visible; }
-            #header { width: 740px; background-color: #000000; overflow: auto; }
+            #container { width: 800px; margin: 0 auto; overflow: visible; }
+            #header { width: 800px; background-color: #000000; overflow: auto; }
             #header a { color: #fff; }
             #admin-nav { float: right; }
-            .page { width: 570px; float: left; background-color: #fff; }
-            #page-nav { width: 170px; float: right; background-color: #E5E5E5; }
+            .page { width: 610px; float: left; background-color: #fff; }
+            #page-nav { width: 190px; float: right; background-color: #E5E5E5; }
+            
+            #page-nav ul .control-move { display: block; float: right; }
             
             .item ul, #page-nav ul { list-style: none; overflow: auto; }
             
             .item, li, .control-new-list-item { clear: left; }
             
+            .item li { margin: 5px 0 0 0; }
+            
             .item {  margin-left: -80px; }
             .page > .controls {  margin-left: -80px; }
-            .control-new-list-item { margin-left: 100px; }
+            .control-new-list-item { margin: 0 0 0 100px;  }
             
-            .controls { background: url(/img/site/nubbin.gif) 0 0 no-repeat; width: 80px; float: left; height: 16px; }
+            .controls { background: url(/img/site/nubbin.gif) 0 -5px no-repeat; width: 80px; float: left; height: 16px; padding: 0 0 10px 0;}
             .controls a { display: block; float: right; font-family: Verdana; }
             .control-delete { text-indent: -100em; margin: 0 10px 0 0; width: 10px; height: 11px; background: url(/img/site/trash.gif) 0 0 no-repeat; }
             .control-edit { margin: 0 10px 0 0; font-size: 11px; height: 10px;  }
             .control-move { cursor: move; margin: 0 10px 0 0; text-indent: -100em; width: 10px; height: 11px; background: url(/img/site/drag_handle.gif) 0 0 no-repeat; }
             
             .item .content { margin-left: 80px; }
+            .item li .content { margin-left: 100px; }
 
             .check { float: left; }
             
         </style>
-        <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script> -->
-        <script type="text/javascript" src="/script/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="/script/jquery-ui-1.8.2.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
         <script type="text/javascript">
             
             //<![CDATA[
@@ -112,6 +115,7 @@ $(function(){
         
         f.find('[name=item]').val('');
         f.show();
+        f.find('[name=item]').focus();
         span.hide();
         
         return false; 
@@ -157,6 +161,7 @@ $(function(){
         
         itemContainer.children('.content'). hide();
         itemContainer.children('.item-edit-form, .listitem-edit-form').show();
+        itemContainer.children('.item-edit-form, .listitem-edit-form').find('textarea').focus();
         
         return false; 
         
@@ -284,7 +289,7 @@ $(function(){
     
     $('.listitem-add-form').live('submit', function() {
         
-        console.log('test');
+        // console.log('test');
         
         var form = $(this);
 
@@ -499,7 +504,7 @@ function updateListItemOrder()
 // Replace plain text urls with links
 function autoLink(input)
 {
-    return input.replace(/^((https?|ftp|dict):[^\'">\s]+)$/img, '<a href="$1">$1</a>');
+    return input.replace(/(^|\s+)((https?|ftp|dict):[^\'">\s]+)($|\s+)/img, '$1<a href="$2">$2</a>$4');
 }
             
             //]]>
