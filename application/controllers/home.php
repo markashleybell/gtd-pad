@@ -40,7 +40,7 @@ class Home_Controller extends Base_Controller {
 	public function action_dbtest()
 	{
 		// Connect to DB and get some test data
-		$users = DB::query('select * from test');
+		$users = User::all();
 		
 		$this->layout->content = View::make('home.dbtest')
 									 ->with('users', $users);

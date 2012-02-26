@@ -78,4 +78,15 @@ return array(
 
 	'cookie' => 'laravel_remember',
 
+	'oauth_app_details' => array( 
+    	'google' => array(
+	        'id' => 'GOOGLE_APP_ID',
+	        'secret' => 'GOOGLE_APP_SECRET',
+	    ),
+	    'facebook' => array(
+	        'id' => 'FACEBOOK_APP_ID',
+	        'secret' => 'FACEBOOK_APP_SECRET',
+	    )
+	),
+
 );
