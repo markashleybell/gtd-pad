@@ -1,0 +1,23 @@
+GET 	/pages
+GET 	/page/{id}
+POST	/page
+PUT 	/page/{id}
+DELETE 	/page/{id}
+
+GET 	/items
+GET 	/item/{id}
+POST	/item/{id}
+PUT 	/item/{id}
+DELETE 	/item/{id}
+
+GET 	/listitems
+GET 	/listitem/{id}
+POST	/listitem
+PUT 	/listitem/{id}
+DELETE 	/listitem/{id}
+
+GET 	/users
+GET 	/user/{id}
+POST	/user
+PUT 	/user/{id}
+DELETE 	/user/{id}

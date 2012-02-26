@@ -33,7 +33,7 @@
 |
 */
 
-Route::controller(array('home', 'auth'));
+Route::controller(array('home', 'auth', 'api'));
 
 /*
 |--------------------------------------------------------------------------
