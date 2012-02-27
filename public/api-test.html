@@ -2,8 +2,10 @@
 <html>
 <head>
 	<title>API Test Harness</title>
+	<link rel="stylesheet" type="text/css" href="prettify/prettify.css" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="js/json2.js"></script>
+	<script type="text/javascript" src="prettify/prettify.js"></script>
 	<script type="text/javascript">
 
 		var json = {
@@ -49,9 +51,15 @@
 	            type: f.find('#method').val(),
 	            dataType: 'json',
 	            data: body,
-	            error: function (request, status, error) { },
+	            error: function (request, status, error) { 
+	            	var output = JSON.stringify(JSON.parse(request.responseText));
+	                $('#console').html(output);
+	                prettyPrint();
+	            },
 	            success: function (data, status, request) {
-	                console.log(data);
+            		var output = JSON.stringify(data);
+	                $('#console').html(output);
+	                prettyPrint();
 	            }
 	        });
 		}
@@ -65,6 +73,8 @@
 		$(function(){
 
 			$('#api-form').on('submit', makeApiCall);
+
+			prettyPrint();
 
 		});
 
@@ -80,7 +90,7 @@
 			<option value="PUT">PUT</option>
 			<option value="DELETE">DELETE</option>
 		</select>
-		<input type="text" name="url" id="url" value="/pages" /></p>
+		<input type="text" name="url" id="url" value="/pages/list" /></p>
 
 		<p><a href="#" onclick="setRequestBody('page');">Page</a> | 
 		<a href="#" onclick="setRequestBody('item');">Item</a> | 
@@ -92,6 +102,8 @@
 		<p><input type="submit" value="Submit" /></p>
 
 	</form>
+
+	<code id="console" class="prettyprint lang-js"></code>
 
 </body>
 </html>
