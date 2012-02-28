@@ -33,7 +33,7 @@ class Api_Controller extends Base_Controller {
 
                 // If null, return 404
                 if($page == null)
-                    return JSONUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
+                    return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
                 // In this case $page is actually an array because we used get() rather than first(), 
                 // so just return the attributes of the first element
@@ -42,7 +42,7 @@ class Api_Controller extends Base_Controller {
             catch(Exception $e)
             {
                 // In most cases, this will be thrown if the client gets a field name wrong
-                return JSONUtils::createResponse(400, 'Bad Request', 'Property list contained one or more invalid property names'); 
+                return ApiUtils::createResponse(400, 'Bad Request', 'Property list contained one or more invalid property names'); 
             }
         }
         else // Client wants ALL data fields
@@ -50,7 +50,7 @@ class Api_Controller extends Base_Controller {
             $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
 
             if($page == null)
-                return JSONUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
+                return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
             return Response::make(json_encode($page->attributes), 200, array('Content-Type' => 'application/json'));
         }
@@ -61,7 +61,7 @@ class Api_Controller extends Base_Controller {
     {
         // Prevent POST requests to a url with an id segment
         if($id != null)
-            return JSONUtils::createResponse(400, 'Bad Request', 'POST requests to an item/id url are not supported');
+            return ApiUtils::createResponse(400, 'Bad Request', 'POST requests to an item/id url are not supported');
 
         try
         {
@@ -80,7 +80,7 @@ class Api_Controller extends Base_Controller {
         catch(Exception $e)
         {
             // In most cases, this will be thrown if the client gets a field name wrong
-            return JSONUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
+            return ApiUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
         }
 
         // Return all the details of the new page as a JSON response
@@ -92,14 +92,14 @@ class Api_Controller extends Base_Controller {
     {
         // Handle the lack of an ID
         if($id == null)
-            return JSONUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
 
         // Get the existing page data
         $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($page == null)
-            return JSONUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
+            return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
         // Update the data from PUT data fields
         $page->title = Input::get('title');
@@ -116,14 +116,14 @@ class Api_Controller extends Base_Controller {
     {
         // Handle the lack of an ID
         if($id == null)
-            return JSONUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
 
         // Get the existing page data
         $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($page == null)
-            return JSONUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
+            return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
         // 'Soft delete' to allow for undo functionality
         $page->deleted = true;
