@@ -57,31 +57,43 @@ class Api_Controller extends Base_Controller {
     }
 
     // CREATE: POST /pages
-    public function post_pages($id)
+    public function post_pages($id = null)
     {
         // Prevent POST requests to a url with an id segment
         if($id != null)
             return JSONUtils::createResponse(400, 'Bad Request', 'POST requests to an item/id url are not supported');
 
-        // Create a new page from POST data
-        $page = new Page;
+        try
+        {
+            // Create a new page from POST data
+            $page = new Page;
 
-        // TODO: need some input validation here! Does Laravel help with this already?
-        $page->title = Input::get('title');
-        $page->displayorder = Input::get('displayorder');
+            // TODO: need some input validation here! Does Laravel help with this already?
+            $page->title = Input::get('title');
+            $page->displayorder = Input::get('displayorder');
 
-        // Set the user id from the authed user
-        //$page->user_id = 
+            // Set the user id from the authed user
+            //$page->user_id = 
 
-        $page->save();
+            $page->save();
+        }
+        catch(Exception $e)
+        {
+            // In most cases, this will be thrown if the client gets a field name wrong
+            return JSONUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
+        }
 
         // Return all the details of the new page as a JSON response
         return Response::make(json_encode($page->attributes), 201, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1
-    public function put_pages($id)
+    public function put_pages($id = null)
     {
+        // Handle the lack of an ID
+        if($id == null)
+            return JSONUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
+
         // Get the existing page data
         $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
 
@@ -100,8 +112,12 @@ class Api_Controller extends Base_Controller {
     }
 
     // DELETE: DELETE /pages/1
-    public function delete_pages($id)
+    public function delete_pages($id = null)
     {
+        // Handle the lack of an ID
+        if($id == null)
+            return JSONUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
+
         // Get the existing page data
         $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
 
