@@ -7,7 +7,7 @@
     </head>
     <body>
         <p>
-            <a href="/gtd-pad/public">Home</a> | <a href="/gtd-pad/public/home/dbtest">Test</a> 
+            <a href="/gtd-pad/public">Home</a> | <a href="/gtd-pad/public/api-test.html">Test</a> 
         </p>
 
         {{ $content }}
