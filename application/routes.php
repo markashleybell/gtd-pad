@@ -33,8 +33,7 @@
 |
 */
 
-Route::any('api/pages', 'api@pages');
-Route::any('api/pages/(:num)', 'api@pages');
+Route::any('api/pages, api/pages/(:num)', 'api.pages@index');
 
 Route::controller(array('home', 'auth'));
 
