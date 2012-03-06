@@ -33,6 +33,7 @@
 |
 */
 
+Route::any('api/pages/(:num)/items/(:num)/items, api/pages/(:num)/items/(:num)/items/(:num)', 'api.listitems@index');
 Route::any('api/pages/(:num)/items, api/pages/(:num)/items/(:num)', 'api.items@index');
 Route::any('api/pages, api/pages/(:num)', 'api.pages@index');
 
