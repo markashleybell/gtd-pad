@@ -8,29 +8,21 @@ POST	/pages
 PUT 	/pages/{pageid}
 DELETE 	/pages/{pageid}
 
-Notes:
+Items:
 ------------------------------
-GET 	/pages/{pageid}/notes
-GET 	/pages/{pageid}/notes/{noteid}
-POST	/pages/{pageid}/notes
-PUT 	/pages/{pageid}/notes/{noteid}
-DELETE 	/pages/{pageid}/notes/{noteid}
-
-Lists:
-------------------------------
-GET     /pages/{pageid}/lists
-GET     /pages/{pageid}/lists/{listid}
-POST    /pages/{pageid}/lists
-PUT     /pages/{pageid}/lists/{listid}
-DELETE  /pages/{pageid}/lists/{listid}
+GET 	/pages/{pageid}/items
+GET 	/pages/{pageid}/items/{itemid}
+POST	/pages/{pageid}/items
+PUT 	/pages/{pageid}/items/{itemid}
+DELETE 	/pages/{pageid}/items/{itemid}
 
 List Items:
 ------------------------------
-GET     /pages/{pageid}/lists/{listid}/notes
-GET     /pages/{pageid}/lists/{listid}/notes/{noteid}
-GET     /pages/{pageid}/lists/{listid}/notes
-PUT     /pages/{pageid}/lists/{listid}/notes/{noteid}
-DELETE  /pages/{pageid}/lists/{listid}/notes/{noteid}
+GET     /pages/{pageid}/items/{listid}/items
+GET     /pages/{pageid}/items/{listid}/items/{itemid}
+POST    /pages/{pageid}/items/{listid}/items
+PUT     /pages/{pageid}/items/{listid}/items/{itemid}
+DELETE  /pages/{pageid}/items/{listid}/items/{itemid}
 
 Users (Private):
 ------------------------------
