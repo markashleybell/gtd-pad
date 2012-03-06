@@ -1,6 +1,6 @@
 <?php
 
-class Api_ListItems_Controller extends Base_Controller {
+class ApiV1_ListItems_Controller extends Base_Controller {
 
     public $restful = true;
 
