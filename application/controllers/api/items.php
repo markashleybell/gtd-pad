@@ -92,7 +92,7 @@ class Api_Items_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $item->title = Input::get('title');
             $item->body = Input::get('body');
-            $item->list = Input::get('list');
+            $item->list = (Input::get('list') === 'true') ? true : false;
             $item->page_id = $pageid;
             $item->displayorder = Input::get('displayorder');
 
@@ -132,7 +132,7 @@ class Api_Items_Controller extends Base_Controller {
         // Update the data from PUT data fields
         $item->title = Input::get('title');
         $item->body = Input::get('body');
-        $item->list = Input::get('list');
+        $item->list = (Input::get('list') === 'true') ? true : false;
         $item->page_id = $pageid;
         $item->displayorder = Input::get('displayorder');
 
