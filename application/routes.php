@@ -37,7 +37,7 @@ Route::any('api/v1/pages/(:num)/items/(:num)/items, api/v1/pages/(:num)/items/(:
 Route::any('api/v1/pages/(:num)/items, api/v1/pages/(:num)/items/(:num)', 'apiv1.items@index');
 Route::any('api/v1/pages, api/v1/pages/(:num)', 'apiv1.pages@index');
 
-Route::controller(array('home', 'auth'));
+Route::controller(array('home', 'user'));
 
 /*
 |--------------------------------------------------------------------------
@@ -109,5 +109,5 @@ Route::filter('csrf', function()
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::to('login');
+	if (Auth::guest()) return Redirect::to('user/login');
 });

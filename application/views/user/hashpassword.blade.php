@@ -1,0 +1,1 @@
+<p>Hashed password: {{ $hash }}</p>
