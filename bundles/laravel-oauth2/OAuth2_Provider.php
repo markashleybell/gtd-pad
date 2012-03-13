@@ -31,6 +31,11 @@ abstract class OAuth2_Provider {
 	 */
 	public $callback = null;
 
+    /**
+     * @var  string scope
+     */
+    public $scope;
+
 	/**
 	 * @var  array  additional request parameters to be used for remote requests
 	 */
@@ -116,8 +121,8 @@ abstract class OAuth2_Provider {
 			'redirect_uri' 		=> isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->redirect_uri,
 			'state' 			=> $state,
 			'scope'				=> is_array($this->scope) ? implode($this->scope_seperator, $this->scope) : $this->scope,
-			'response_type' 	=> 'code',
-			'approval_prompt' => 'force' // - google force-recheck
+			'response_type' 	=> 'code'//,
+			//'approval_prompt' => 'force' // - google force-recheck
 		);
 
 		$url = $this->url_authorize().'?'.http_build_query($params);
