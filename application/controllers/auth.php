@@ -2,9 +2,14 @@
 
 class Auth_Controller extends Base_Controller {
 
+    p
 	public $layout = 'layouts.main';
 
-	public function action_session($provider)
+    public function action_login($provider)
+    {
+    }    
+
+	/*public function action_session($provider)
 	{
 	    Bundle::start('laravel-oauth2');
 
@@ -39,6 +44,6 @@ class Auth_Controller extends Base_Controller {
 	        }
 
 	    }
-	}
+	}*/
 
 }

@@ -76,7 +76,7 @@ return array(
 	|
 	*/
 
-	'cookie' => 'laravel_remember',
+	'cookie' => 'gtd_pad_remember',
 
 	'oauth_app_details' => array( 
     	'google' => array(
