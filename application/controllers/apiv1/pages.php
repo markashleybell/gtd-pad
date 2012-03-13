@@ -1,6 +1,6 @@
 <?php
 
-class Api_Pages_Controller extends Base_Controller {
+class ApiV1_Pages_Controller extends Base_Controller {
 
     public $restful = true;
 

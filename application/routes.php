@@ -33,7 +33,9 @@
 |
 */
 
-Route::any('api/pages, api/pages/(:num)', 'api.pages@index');
+Route::any('api/v1/pages/(:num)/items/(:num)/items, api/v1/pages/(:num)/items/(:num)/items/(:num)', 'apiv1.listitems@index');
+Route::any('api/v1/pages/(:num)/items, api/v1/pages/(:num)/items/(:num)', 'apiv1.items@index');
+Route::any('api/v1/pages, api/v1/pages/(:num)', 'apiv1.pages@index');
 
 Route::controller(array('home', 'auth'));
 
