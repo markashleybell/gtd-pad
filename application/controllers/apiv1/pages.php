@@ -3,6 +3,11 @@
 class ApiV1_Pages_Controller extends Base_Controller {
 
     public $restful = true;
+    
+    public function __construct()
+    {
+        $this->filter('before', 'api_auth');
+    }
 
     // GET: GET /pages/1 or GET /pages
     public function get_index($id = null)

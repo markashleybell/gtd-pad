@@ -111,3 +111,8 @@ Route::filter('auth', function()
 {
 	if (Auth::guest()) return Redirect::to('user/login');
 });
+
+Route::filter('api_auth', function()
+{
+    if (Auth::guest()) return ApiUtils::createResponse(401, 'Not Authorised', 'You must be logged in as a valid user to make API calls');
+});

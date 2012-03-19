@@ -4,6 +4,11 @@ class ApiV1_Items_Controller extends Base_Controller {
 
     public $restful = true;
 
+    public function __construct()
+    {
+        $this->filter('before', 'api_auth');
+    }
+
     // GET: GET /pages/1/items/1 or GET /pages/1/items
     public function get_index($pageid = null, $id = null)
     {
