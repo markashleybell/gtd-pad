@@ -31,7 +31,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         // If the id is null, show all list items
         if($id == null)
         {
-            $items = ListItem::where('item_id', '=', $listid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->get();
+            $items = ListItem::where('item_id', '=', $listid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'asc')->get();
 
             $output = array();
 

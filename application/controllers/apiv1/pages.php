@@ -15,7 +15,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
         // If the id is null, show all pages
         if($id == null)
         {
-            $pages = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->get();
+            $pages = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->order_by('displayorder', 'asc')->get();
 
             $output = array();
 
