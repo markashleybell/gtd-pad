@@ -15,7 +15,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
         // If the id is null, show all pages
         if($id == null)
         {
-            $pages = Page::where('deleted', '!=', true)->get();
+            $pages = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->get();
 
             $output = array();
 
@@ -34,7 +34,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
             try
             {
                 // Attempt to retrieve only the requested fields for this record
-                $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->get(explode(',', $fields));
+                $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->get(explode(',', $fields));
 
                 // If null, return 404
                 if($page == null)
@@ -52,7 +52,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
         }
         else // Client wants ALL data fields
         {
-            $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
+            $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->first();
 
             if($page == null)
                 return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
@@ -76,6 +76,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $page->title = Input::get('title');
             $page->displayorder = Input::get('displayorder');
+            $page->user_id = Auth::user()->id;
 
             // Set the user id from the authed user
             //$page->user_id = 
@@ -100,7 +101,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
 
         // Get the existing page data
-        $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
+        $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($page == null)
@@ -124,7 +125,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
 
         // Get the existing page data
-        $page = Page::where('deleted', '!=', true)->where('id', '=', $id)->first();
+        $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($page == null)

@@ -11,16 +11,16 @@ class Home_Controller extends Base_Controller {
 
 	public function action_index()
 	{
-		$this->layout->content = View::make('home.index');
+        // Get the first page id by display order: this is our default index page
+        $id = DB::only('select id from pages where user_id = ? order by displayorder limit 1', Auth::user()->id);
+
+		$this->layout->content = View::make('home.page')
+                                     ->with('pageid', $id);
 	}
 
 	public function action_page($id)
 	{
-		$page = Page::find($id);
-
-		echo(json_encode($page->attributes));
-
 		$this->layout->content = View::make('home.page')
-								     ->with('page', $page);
+								     ->with('pageid', $id);
 	}
 }
