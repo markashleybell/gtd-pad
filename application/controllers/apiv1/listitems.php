@@ -16,13 +16,13 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         if($pageid == null || $listid == null)
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a valid page id and a valid list id to view an item list'); 
 
-        $page = Page::where('deleted', '!=', true)->where('id', '=', $pageid)->first();
+        $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $pageid)->first();
 
         // If null, return 404
         if($page == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No page exists with the requested id');
 
-        $list = Item::where('deleted', '!=', true)->where('id', '=', $listid)->first();
+        $list = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $listid)->first();
 
         // If null, return 404
         if($list == null)
@@ -31,7 +31,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         // If the id is null, show all list items
         if($id == null)
         {
-            $items = ListItem::where('item_id', '=', $listid)->where('deleted', '!=', true)->get();
+            $items = ListItem::where('item_id', '=', $listid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->get();
 
             $output = array();
 
@@ -42,7 +42,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
             return Response::make(json_encode($output), 200, array('Content-Type' => 'application/json'));
         }
 
-        $item = ListItem::where('deleted', '!=', true)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
+        $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
 
         if($item == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No list item exists with the requested id');
@@ -70,9 +70,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
             $item->body = Input::get('body');
             $item->item_id = $listid;
             $item->displayorder = Input::get('displayorder');
-
-            // Set the user id from the authed user
-            //$item->user_id = 
+            $item->user_id = Auth::user()->id;
 
             $item->save();
         }
@@ -98,7 +96,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
 
         // Get the existing list item data
-        $item = ListItem::where('deleted', '!=', true)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
+        $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($item == null)
@@ -127,7 +125,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
 
         // Get the existing page data
-        $item = ListItem::where('deleted', '!=', true)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
+        $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($item == null)

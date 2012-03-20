@@ -16,7 +16,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         if($pageid == null)
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a valid page id to view an item list'); 
 
-        $page = Page::where('deleted', '!=', true)->where('id', '=', $pageid)->first();
+        $page = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $pageid)->first();
 
         // If null, return 404
         if($page == null)
@@ -25,7 +25,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         // If the id is null, show all pages
         if($id == null)
         {
-            $items = Item::where('page_id', '=', $pageid)->where('deleted', '!=', true)->get();
+            $items = Item::where('page_id', '=', $pageid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->get();
 
             $output = array();
 
@@ -36,7 +36,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             return Response::make(json_encode($output), 200, array('Content-Type' => 'application/json'));
         }
 
-        $item = Item::where('deleted', '!=', true)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
+        $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
 
         if($item == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
@@ -97,9 +97,10 @@ class ApiV1_Items_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $item->title = Input::get('title');
             $item->body = Input::get('body');
-            $item->list = (Input::get('list') === 'true') ? true : false;
-            $item->page_id = $pageid;
+            $item->list = (Input::get('list') == 'true') ? true : false;
             $item->displayorder = Input::get('displayorder');
+            $item->page_id = $pageid;
+            $item->user_id = Auth::user()->id;
 
             // Set the user id from the authed user
             //$item->user_id = 
@@ -128,7 +129,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
 
         // Get the existing page data
-        $item = Item::where('deleted', '!=', true)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
+        $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($item == null)
@@ -159,7 +160,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for DELETE actions');
 
         // Get the existing page data
-        $item = Item::where('deleted', '!=', true)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
+        $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($item == null)
