@@ -54,8 +54,10 @@
         // Initialise the page
         function init()
         {
+            // Set the container up for reuse
             var container = $('#container');
 
+            // Retrieve page details 
             $.ajax({
                 url: _config.baseUrl + '/api/v1/pages/' + _config.pageId,
                 data: {  },
@@ -63,8 +65,10 @@
                 type: 'GET',
                 success: function(page, status, request) {
 
+                    // Render the page template, passing the JSON model we retrieved in as a view model
                     container.html(Mustache.render(_config.templates.page, page));
 
+                    // Retrieve items for this page
                     $.ajax({
                         url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items',
                         data: {  },
@@ -72,14 +76,20 @@
                         type: 'GET',
                         success: function(items, status, request) {
 
+                            // Loop through the list of retrieved items for this page
                             $.each(items, function(i, item){
 
+                                // Render an item template for each item, passing its JSON model in as a view model
                                 container.append(Mustache.render(_config.templates.item, item));
                             
+                                // If the item is a list
                                 if(item.list == 1)
                                 {
+                                    // Append a list to it and get a reference to the list
                                     $('#item-' + item.id).append(Mustache.render(_config.templates.list, item));
+                                    var listContainer = $('#list-' + item.id);
 
+                                    // Retrieve the list items for this list
                                     $.ajax({
                                         url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/' + item.id + '/items',
                                         data: {  },
@@ -87,10 +97,11 @@
                                         type: 'GET',
                                         success: function(listitems, status, request) {
                                             
-                                            var listContainer = $('#list-' + item.id);
-
+                                            // Loop through the items retrieved for this list
                                             $.each(listitems, function(i, listitem){
 
+                                                // Render an item template for each item, passing its JSON model in as a view model
+                                                // and then append the new item to the list
                                                 listContainer.append(Mustache.render(_config.templates.listitem, listitem));
                                             
                                             });
