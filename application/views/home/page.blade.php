@@ -41,6 +41,11 @@
                 listitem: null,
                 pagenavitem: null
             },
+            forms: { // Container to hold template HTML for reuse
+                page: null,
+                item: null,
+                listitem: null
+            },
             // Check if all of the template HTML is currently loaded
             // If it is, fire off a callback
             templatesLoaded: function(callback) { 
@@ -49,6 +54,14 @@
                 && this.templates.list !== null 
                 && this.templates.listitem !== null
                 && this.templates.pagenavitem !== null)
+                    callback();
+            },
+            // Check if all of the template HTML is currently loaded
+            // If it is, fire off a callback
+            formsLoaded: function(callback) { 
+                if(this.forms.page !== null 
+                && this.forms.item !== null 
+                && this.forms.listitem !== null)
                     callback();
             }
         };
@@ -68,6 +81,27 @@
                         // Call a method of the template cache object which checks if all
                         // template HTML is loaded, with a callback to fire if it is
                         _config.templatesLoaded(callback);
+                    });
+
+                })(keys[i]);
+            }
+        }
+
+        // Retrieve the specified template HTML and store it in a global 'cache'
+        function loadForms(keys, callback) {
+
+            for(var i=0;i<keys.length;i++){
+
+                // Give this it's own scope, otherwise we'll only ever load the last key
+                // because the callbacks will fire after the loop has finished
+                (function(key){
+                    // Retrieve the template file and put the HTML content into the global var,
+                    // then pass both data and template to the rendering function
+                    $.get(_config.baseUrl + '/template/' + key + '.form.html', function (template) {
+                        _config.forms[key] = template;
+                        // Call a method of the template cache object which checks if all
+                        // template HTML is loaded, with a callback to fire if it is
+                        _config.formsLoaded(callback);
                     });
 
                 })(keys[i]);
@@ -166,6 +200,13 @@
                 },
                 error: function(request, status, error) { console.log(error); }
             });
+
+            $('#')
+        }
+
+        function formSetup()
+        {
+            console.log('Setup forms');
         }
 
         $(function(){
@@ -175,6 +216,8 @@
 
             // Load templates and fire init function when done
             loadTemplates(['page', 'item', 'list', 'listitem', 'pagenavitem'], init);
+
+            loadForms(['page', 'item', 'listitem'], formSetup);
 
         });
 
