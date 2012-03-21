@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 CREATE TABLE IF NOT EXISTS `listitems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `body` text NOT NULL,
+  `completed` tinyint(1) NOT NULL,
   `displayorder` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
