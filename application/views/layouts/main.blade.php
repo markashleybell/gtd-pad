@@ -7,7 +7,7 @@
     </head>
     <body>
         <p>
-            <a href="/gtd-pad/public">Home</a> | <a href="/gtd-pad/public/api-test.html">Test</a> | <a href="/gtd-pad/public/user/logout">Log Out</a> 
+            <a href="/gtd-pad/public">Home</a> | <a href="/gtd-pad/public/api-test.html">Test</a> | <a href="/gtd-pad/public/user/signup">Sign Up</a> | <a href="/gtd-pad/public/user/logout">Log Out</a> 
         </p>
 
         <div id="container">

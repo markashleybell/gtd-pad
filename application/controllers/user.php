@@ -6,6 +6,61 @@ class User_Controller extends Base_Controller {
 
 	public $layout = 'layouts.main';
 
+    public function __construct()
+    {
+        $this->filter('before', 'csrf')->on('post');
+    }
+
+    public function get_signup()
+    {
+        $this->layout->content = View::make('user.signup');
+    }    
+
+    public function post_signup()
+    {
+        $rules = array(
+            'email' => 'required|unique:users',
+            'password' => 'required|confirmed'
+        );               
+
+        $validator = Validator::make(Input::get(), $rules);
+
+        if (!$validator->valid())
+        {
+            return Redirect::to('user/signup')
+                           ->with('content', View::make('user.signup'))
+                           ->with('errors', $validator->errors)
+                           ->with_input('except', array('password'));
+        }
+
+        $user = new User;
+
+        // TODO: need some input validation here! Does Laravel help with this already?
+        $user->email = Input::get('email');
+        $user->password = Hash::make(Input::get('password'));
+
+        $user->save();
+
+        // Add the user's initial Page and Item
+        $page = new Page;
+        $page->title = "Your First Page";
+        $page->displayorder = 0;
+        $page->user_id = $user->id;
+        $page->save();
+
+        $item = new Item;
+        $item->title = "Welcome to GTD-Pad";
+        $item->body = "This is your first item. Use the controls to the left to edit or delete it."; //
+        $item->displayorder = 0;
+        $item->user_id = $user->id;
+        $item->page_id = $page->id;
+        $item->save();
+
+        return Redirect::to('user/login')
+                           ->with('content', View::make('user.login'))
+                           ->with_input('except', array('password'));
+    } 
+
     public function get_login()
     {
         $this->layout->content = View::make('user.login');
@@ -33,7 +88,7 @@ class User_Controller extends Base_Controller {
 
         if (Auth::attempt($email, $password))
         {
-             return Redirect::to('home/index');
+             return Redirect::to('');
         }
 
         return Redirect::to('user/login')
@@ -45,7 +100,7 @@ class User_Controller extends Base_Controller {
     {
         Auth::logout();
 
-        return Redirect::to('home/index');
+        return Redirect::to('');
     }
 
     public function get_hashpassword($password)
