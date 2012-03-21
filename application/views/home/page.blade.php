@@ -201,7 +201,12 @@
                 error: function(request, status, error) { console.log(error); }
             });
 
-            $('#')
+            $('#content').on('click', '.edit-link', function(event){
+
+                event.preventDefault();
+                console.log($(this).parent().parent().attr('id'));
+
+            });
         }
 
         function formSetup()
