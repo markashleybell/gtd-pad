@@ -4,7 +4,28 @@
 
 @endsection
 
-<p id="load-message">Loading data</p>
+<div id="navigation">
+
+    <p><a href="#" id="add-page">Add new page</a></p>
+
+    <ul id="page-navigation">
+        
+    </ul>
+
+</div>
+
+<div id="content">
+
+    <div id="add-bar">
+        <ul>
+            <li><a href="#" id="add-list">Add List</a></li>
+            <li><a href="#" id="add-note">Add Note</a></li>
+        </ul>
+    </div>
+
+    <p id="load-message">Loading data</p>
+
+</div>
 
 @section('foot')
 
@@ -17,7 +38,8 @@
                 page: null,
                 item: null,
                 list: null,
-                listitem: null
+                listitem: null,
+                pagenavitem: null
             },
             // Check if all of the template HTML is currently loaded
             // If it is, fire off a callback
@@ -25,7 +47,8 @@
                 if(this.templates.page !== null 
                 && this.templates.item !== null 
                 && this.templates.list !== null 
-                && this.templates.listitem !== null)
+                && this.templates.listitem !== null
+                && this.templates.pagenavitem !== null)
                     callback();
             }
         };
@@ -55,7 +78,7 @@
         function init()
         {
             // Set the container up for reuse
-            var container = $('#container');
+            var container = $('#content');
 
             // Retrieve page details 
             $.ajax({
@@ -66,7 +89,7 @@
                 success: function(page, status, request) {
 
                     // Render the page template, passing the JSON model we retrieved in as a view model
-                    container.html(Mustache.render(_config.templates.page, page));
+                    container.find('#load-message').replaceWith(Mustache.render(_config.templates.page, page));
 
                     // Retrieve items for this page
                     $.ajax({
@@ -120,6 +143,29 @@
                 },
                 error: function(request, status, error) { console.log(error); }
             });
+
+            var pageNav = $('#page-navigation');
+
+            // Retrieve all pages for this user to build page nav
+            $.ajax({
+                url: _config.baseUrl + '/api/v1/pages',
+                data: {  },
+                dataType: 'json',
+                type: 'GET',
+                success: function(pages, status, request) {
+                    
+                    // Loop through the items retrieved for this list
+                    $.each(pages, function(i, page){
+
+                        // Render an item template for each item, passing its JSON model in as a view model
+                        // and then append the new item to the list
+                        pageNav.append(Mustache.render(_config.templates.pagenavitem, page));
+                    
+                    });
+
+                },
+                error: function(request, status, error) { console.log(error); }
+            });
         }
 
         $(function(){
@@ -128,7 +174,7 @@
             _config.pageId = {{$pageid}};
 
             // Load templates and fire init function when done
-            loadTemplates(['page', 'item', 'list', 'listitem'], init);
+            loadTemplates(['page', 'item', 'list', 'listitem', 'pagenavitem'], init);
 
         });
 
