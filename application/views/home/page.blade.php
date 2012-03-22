@@ -204,7 +204,23 @@
             $('#content').on('click', '.edit-link', function(event){
 
                 event.preventDefault();
-                console.log($(this).parent().parent().attr('id'));
+
+                var item = $(this).parent().parent(); // Get the parent item container of the clicked edit link
+
+                var info = item.attr('id').split('-'); // Gives us a two-element array where index 0 is the item type and 1 is the ID
+
+                var content = item.find('.content'); // Get the content of the item
+
+                // TODO: Write function to serialise/deserialise content sections to/from models
+                var model = { 
+                    id: info[0], 
+                    title: content.find('h1, h2').html(), 
+                    body: content.find('p').html() 
+                };
+
+                item.append(Mustache.render(_config.forms[info[0]], model));
+
+                content.hide();
 
             });
         }
