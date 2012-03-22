@@ -140,7 +140,9 @@ class ApiV1_Items_Controller extends Base_Controller {
         $item->body = Input::get('body');
         $item->list = (Input::get('list') === 'true') ? true : false;
         $item->page_id = $pageid;
-        $item->displayorder = Input::get('displayorder');
+
+        if(Input::get('displayorder') != null)
+            $item->displayorder = Input::get('displayorder');
 
         $item->save();
 
