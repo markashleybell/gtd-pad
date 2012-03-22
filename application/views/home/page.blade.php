@@ -260,7 +260,10 @@
                     type: 'PUT',
                     success: function(data, status, request) {
                         
-                        alert(data.title);
+                        var item = form.parent();
+
+                        item.find('.title').html(data.title);
+                        item.find('.body').html('<p>' + data.body + '</p>');
 
                         $('.edit-form').remove();
                         $('.content').show();
