@@ -205,6 +205,9 @@
 
                 event.preventDefault();
 
+                $('.edit-form').remove();
+                $('.content').show();
+
                 var item = $(this).parent().parent(); // Get the parent item container of the clicked edit link
 
                 var info = item.attr('id').split('-'); // Gives us a two-element array where index 0 is the item type and 1 is the ID
@@ -213,7 +216,7 @@
 
                 // TODO: Write function to serialise/deserialise content sections to/from models
                 var model = { 
-                    id: info[0], 
+                    id: info[1], 
                     title: content.find('h1, h2').html(), 
                     body: content.find('p').html() 
                 };
@@ -221,6 +224,50 @@
                 item.append(Mustache.render(_config.forms[info[0]], model));
 
                 content.hide();
+
+            });
+
+            $('#content').on('submit', '.edit-form', function(event){
+
+                event.preventDefault();
+
+                var form = $(this);
+
+                // Gives us a three-element array where index 1 is the item type and 2 is the ID
+                var info = form.attr('id').split('-'); 
+
+                // alert(info[2]);
+
+                var apiCall = '';
+
+                switch(info[1])
+                {
+                    case 'item':
+                        apiCall = '/items/' + info[2];
+                        break;
+                    case 'page':
+                        break;
+                }
+
+                // Retrieve all pages for this user to build page nav
+                $.ajax({
+                    url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + apiCall,
+                    data: {  
+                        title: form.find('[name=title]').val(),
+                        body: form.find('[name=body]').val(),
+                    },
+                    dataType: 'json',
+                    type: 'PUT',
+                    success: function(data, status, request) {
+                        
+                        console.log(data);
+
+                    },
+                    error: function(request, status, error) { console.log(error); }
+                });
+
+                $('.edit-form').remove();
+                $('.content').show();
 
             });
         }
