@@ -260,14 +260,14 @@
                     type: 'PUT',
                     success: function(data, status, request) {
                         
-                        console.log(data);
+                        alert(data.title);
+
+                        $('.edit-form').remove();
+                        $('.content').show();
 
                     },
                     error: function(request, status, error) { console.log(error); }
                 });
-
-                $('.edit-form').remove();
-                $('.content').show();
 
             });
         }
