@@ -239,6 +239,7 @@
                 // alert(info[2]);
 
                 var apiCall = '';
+                var updateNav = false;
 
                 switch(info[1])
                 {
@@ -246,6 +247,7 @@
                         apiCall = '/items/' + info[2];
                         break;
                     case 'page':
+                        updateNav = true;
                         break;
                 }
 
@@ -264,6 +266,8 @@
 
                         item.find('.title').html(data.title);
                         item.find('.body').html('<p>' + data.body + '</p>');
+
+                        $('#pagenav-' + info[2] + ' a').html(data.title);
 
                         $('.edit-form').remove();
                         $('.content').show();
