@@ -25,7 +25,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         // If the id is null, show all pages
         if($id == null)
         {
-            $items = Item::where('page_id', '=', $pageid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'asc')->get();
+            $items = Item::where('page_id', '=', $pageid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'desc')->get();
 
             $output = array();
 

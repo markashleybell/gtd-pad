@@ -108,6 +108,29 @@
             }
         }
 
+        function addForm(type, location) {
+
+            var model = {
+                id: 0,
+                title: '',
+                body: ''
+            };
+
+            switch(type)
+            {
+                case 'list':
+                    location.after(Mustache.render(_config.templates.item, model));
+                    $('#item-0').append(Mustache.render(_config.forms.item, model));
+                case 'note':
+                    location.after(Mustache.render(_config.templates.item, model));
+                    $('#item-0').append(Mustache.render(_config.forms.item, model));
+                    break;
+                case 'listitem':
+                    location.append(Mustache.render(_config.forms.listitem, model));
+                    break;
+            }
+        }
+
         // Initialise the page
         function init()
         {
@@ -236,30 +259,47 @@
                 // Gives us a three-element array where index 1 is the item type and 2 is the ID
                 var info = form.attr('id').split('-'); 
 
-                // alert(info[2]);
+                var type = info[1];
+                var id = parseInt(info[2], 10);
 
                 var apiCall = '';
                 var updateNav = false;
+                var method = '';
 
-                switch(info[1])
+                var model = {  
+                    title: form.find('[name=title]').val(),
+                    body: form.find('[name=body]').val(),
+                    list: 0
+                };
+
+                switch(type)
                 {
                     case 'item':
-                        apiCall = '/items/' + info[2];
+                        if(id === 0)
+                        {
+                            apiCall = '/items';
+                            method = 'POST';
+                            model.displayorder = 10000;
+                        }
+                        else
+                        {
+                            apiCall = '/items/' + id;
+                            method = 'PUT';
+                        }
                         break;
                     case 'page':
                         updateNav = true;
+                        model.displayorder = 10000;
+                        method = 'PUT';
                         break;
                 }
 
                 // Retrieve all pages for this user to build page nav
                 $.ajax({
                     url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + apiCall,
-                    data: {  
-                        title: form.find('[name=title]').val(),
-                        body: form.find('[name=body]').val(),
-                    },
+                    data: model,
                     dataType: 'json',
-                    type: 'PUT',
+                    type: method,
                     success: function(data, status, request) {
                         
                         var item = form.parent();
@@ -267,7 +307,10 @@
                         item.find('.title').html(data.title);
                         item.find('.body').html('<p>' + data.body + '</p>');
 
-                        $('#pagenav-' + info[2] + ' a').html(data.title);
+                        item.attr('id', type + '-' + data.id)
+
+                        if(type == 'page')
+                            $('#pagenav-' + id + ' a').html(data.title);
 
                         $('.edit-form').remove();
                         $('.content').show();
@@ -277,11 +320,28 @@
                 });
 
             });
+
+            $('#add-list').on('click', function(event) {
+
+                event.preventDefault();
+
+
+
+            });
+
+            $('#add-note').on('click', function(event) {
+
+                event.preventDefault();
+
+                addForm('note', $('.page-container'));
+
+            });
+
         }
 
         function formSetup()
         {
-            console.log('Setup forms');
+            
         }
 
         $(function(){
