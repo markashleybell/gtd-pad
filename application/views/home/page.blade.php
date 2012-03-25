@@ -119,9 +119,12 @@
             switch(type)
             {
                 case 'list':
+                    model.list = 1;
                     location.after(Mustache.render(_config.templates.item, model));
-                    $('#item-0').append(Mustache.render(_config.forms.item, model));
+                    $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
+                    break;
                 case 'note':
+                    model.list = 0;
                     location.after(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model));
                     break;
@@ -163,7 +166,7 @@
                                 container.append(Mustache.render(_config.templates.item, item));
                             
                                 // If the item is a list
-                                if(item.list == 1)
+                                if(item.list === 1)
                                 {
                                     // Append a list to it and get a reference to the list
                                     $('#item-' + item.id).append(Mustache.render(_config.templates.list, item));
@@ -241,7 +244,8 @@
                 var model = { 
                     id: info[1], 
                     title: content.find('h1, h2').html(), 
-                    body: content.find('p').html() 
+                    body: content.find('p').html(),
+                    list: item.data('list')
                 };
 
                 item.append(Mustache.render(_config.forms[info[0]], model));
@@ -269,7 +273,7 @@
                 var model = {  
                     title: form.find('[name=title]').val(),
                     body: form.find('[name=body]').val(),
-                    list: 0
+                    list: form.find('[name=list]').val()
                 };
 
                 switch(type)
@@ -325,7 +329,7 @@
 
                 event.preventDefault();
 
-
+                addForm('list', $('.page-container'));
 
             });
 

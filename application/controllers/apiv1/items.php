@@ -97,13 +97,10 @@ class ApiV1_Items_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $item->title = Input::get('title');
             $item->body = Input::get('body');
-            $item->list = (Input::get('list') == 'true') ? true : false;
+            $item->list = intval(Input::get('list'));
             $item->displayorder = Input::get('displayorder');
             $item->page_id = $pageid;
             $item->user_id = Auth::user()->id;
-
-            // Set the user id from the authed user
-            //$item->user_id = 
 
             $item->save();
         }
@@ -138,7 +135,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         // Update the data from PUT data fields
         $item->title = Input::get('title');
         $item->body = Input::get('body');
-        $item->list = (Input::get('list') === 'true') ? true : false;
+        $item->list = intval(Input::get('list'));
         $item->page_id = $pageid;
 
         if(Input::get('displayorder') != null)
