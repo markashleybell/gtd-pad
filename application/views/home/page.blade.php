@@ -120,18 +120,38 @@
             {
                 case 'list':
                     model.list = 1;
-                    location.after(Mustache.render(_config.templates.item, model));
+                    location.prepend(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
                     break;
                 case 'note':
                     model.list = 0;
-                    location.after(Mustache.render(_config.templates.item, model));
+                    location.prepend(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model));
                     break;
                 case 'listitem':
                     location.append(Mustache.render(_config.forms.listitem, model));
                     break;
             }
+        }
+
+        function updateDisplayOrder(event, ui) {
+            var model = {};
+            $('.item-container').each(function(i, item){
+                model['displayorder-' + item.id.split('-')[1]] = i;
+            });
+            // Update display order
+            $.ajax({
+                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/order',
+                data: model,
+                dataType: 'json',
+                type: 'PUT',
+                success: function(listitems, status, request) {
+                    
+                    // We don't need to do anything here...
+
+                },
+                error: function(request, status, error) { console.log(error); }
+            });
         }
 
         // Initialise the page
@@ -150,6 +170,7 @@
 
                     // Render the page template, passing the JSON model we retrieved in as a view model
                     container.find('#load-message').replaceWith(Mustache.render(_config.templates.page, page));
+                    var itemContainer = container.find('#items')
 
                     // Retrieve items for this page
                     $.ajax({
@@ -163,7 +184,7 @@
                             $.each(items, function(i, item){
 
                                 // Render an item template for each item, passing its JSON model in as a view model
-                                container.append(Mustache.render(_config.templates.item, item));
+                                itemContainer.append(Mustache.render(_config.templates.item, item));
                             
                                 // If the item is a list
                                 if(item.list === 1)
@@ -194,6 +215,10 @@
                                     });
                                 }
 
+                            });
+
+                            $("#items").sortable({
+                                stop: updateDisplayOrder
                             });
 
                         },
@@ -283,7 +308,6 @@
                         {
                             apiCall = '/items';
                             method = 'POST';
-                            model.displayorder = 10000;
                         }
                         else
                         {
@@ -293,12 +317,11 @@
                         break;
                     case 'page':
                         updateNav = true;
-                        model.displayorder = 10000;
                         method = 'PUT';
                         break;
                 }
 
-                // Retrieve all pages for this user to build page nav
+                // Update the item
                 $.ajax({
                     url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + apiCall,
                     data: model,
@@ -319,6 +342,9 @@
                         $('.edit-form').remove();
                         $('.content').show();
 
+                        $("#items").sortable('refresh');
+                        updateDisplayOrder();
+
                     },
                     error: function(request, status, error) { console.log(error); }
                 });
@@ -329,7 +355,7 @@
 
                 event.preventDefault();
 
-                addForm('list', $('.page-container'));
+                addForm('list', $('#items'));
 
             });
 
@@ -337,7 +363,7 @@
 
                 event.preventDefault();
 
-                addForm('note', $('.page-container'));
+                addForm('note', $('#items'));
 
             });
 

@@ -25,7 +25,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         // If the id is null, show all pages
         if($id == null)
         {
-            $items = Item::where('page_id', '=', $pageid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'desc')->get();
+            $items = Item::where('page_id', '=', $pageid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'asc')->get();
 
             $output = array();
 
@@ -98,7 +98,10 @@ class ApiV1_Items_Controller extends Base_Controller {
             $item->title = Input::get('title');
             $item->body = Input::get('body');
             $item->list = intval(Input::get('list'));
-            $item->displayorder = Input::get('displayorder');
+            
+            if(Input::get('displayorder') != null)
+                $item->displayorder = Input::get('displayorder');
+
             $item->page_id = $pageid;
             $item->user_id = Auth::user()->id;
 
@@ -145,6 +148,34 @@ class ApiV1_Items_Controller extends Base_Controller {
 
         // Return all the details of the updated page as a JSON response
         return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+    }
+
+    // UPDATE: PUT /pages/1/items/order
+    public function put_order($pageid = null)
+    {
+        // Check for page id
+        if($pageid == null)
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a page id to update item ordering');
+
+        // Get the existing page data
+        $items = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->get();
+
+        try
+        {
+            foreach($items as $item)
+            {
+                $item->displayorder = Input::get('displayorder-' . $item->id);
+                $item->save();
+            }
+        }
+        catch(Exception $e)
+        {
+            // In most cases, this will be thrown if the client gets a field name wrong
+            return ApiUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
+        }
+
+        // Return a flag indicating success or failure
+        return ApiUtils::createResponse(200, 'OK', 'Update successful'); 
     }
 
     // DELETE: DELETE /pages/1/items/1
