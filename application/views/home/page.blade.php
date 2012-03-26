@@ -126,10 +126,11 @@
                 case 'note':
                     model.list = 0;
                     location.prepend(Mustache.render(_config.templates.item, model));
-                    $('#item-0').append(Mustache.render(_config.forms.item, model));
+                    $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
                     break;
                 case 'listitem':
-                    location.append(Mustache.render(_config.forms.listitem, model));
+                    location.append(Mustache.render(_config.templates.listitem, model));
+                    $('#listitem-0').append(Mustache.render(_config.forms.listitem, model)).find('.content').hide();
                     break;
             }
         }
@@ -377,6 +378,14 @@
                 event.preventDefault();
 
                 addForm('note', $('#items'));
+
+            });
+
+            $('#content').on('click', '.add-listitem', function(event) {
+
+                event.preventDefault();
+
+                addForm('listitem', $(this).prev('ul'));
 
             });
 
