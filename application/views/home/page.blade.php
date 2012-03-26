@@ -315,6 +315,19 @@
                             method = 'PUT';
                         }
                         break;
+                    case 'listitem':
+                        var parentId = form.parent().parent().attr('id').split('-')[1];
+                        if(id === 0)
+                        {
+                            apiCall = '/items/' + parentId + '/items';
+                            method = 'POST';
+                        }
+                        else
+                        {
+                            apiCall = '/items/' + parentId + '/items/' + id;
+                            method = 'PUT';
+                        }
+                        break;
                     case 'page':
                         updateNav = true;
                         method = 'PUT';
