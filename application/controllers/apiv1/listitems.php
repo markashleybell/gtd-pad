@@ -69,7 +69,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $item->body = Input::get('body');
             $item->item_id = $listid;
-            $item->displayorder = Input::get('displayorder');
+            $item->displayorder = 0; //Input::get('displayorder');
             $item->user_id = Auth::user()->id;
 
             $item->save();
