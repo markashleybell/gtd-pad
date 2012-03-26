@@ -113,6 +113,34 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
     }
 
+    // UPDATE: PUT /pages/1/items/1/items/order
+    public function put_order($pageid = null, $listid = null)
+    {
+        // Check for page id
+        if($pageid == null)
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a page id and a list id to update item ordering');
+
+        // Get the existing page data
+        $items = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->get();
+
+        try
+        {
+            foreach($items as $item)
+            {
+                $item->displayorder = Input::get('displayorder-' . $item->id);
+                $item->save();
+            }
+        }
+        catch(Exception $e)
+        {
+            // In most cases, this will be thrown if the client gets a field name wrong
+            return ApiUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
+        }
+
+        // Return a flag indicating success or failure
+        return ApiUtils::createResponse(200, 'OK', 'Update successful'); 
+    }
+
     // DELETE: DELETE /pages/1/items/1/items/1
     public function delete_index($pageid = null, $listid = null, $id = null)
     {

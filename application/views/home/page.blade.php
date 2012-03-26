@@ -135,7 +135,7 @@
             }
         }
 
-        function updateDisplayOrder(event, ui) {
+        function updateItemDisplayOrder(event, ui) {
             var model = {};
             $('.item-container').each(function(i, item){
                 model['displayorder-' + item.id.split('-')[1]] = i;
@@ -152,6 +152,31 @@
 
                 },
                 error: function(request, status, error) { console.log(error); }
+            });
+        }
+
+        function updateListItemDisplayOrder(event, ui) {
+            var model = {};
+            $('.item-list').each(function(i, item){
+
+                var itemId = $(this).attr('id').split('-')[1];
+
+                $('.listitem-container').each(function(i, item){
+                    model['displayorder-' + item.id.split('-')[1]] = i;
+                });
+                // Update display order
+                $.ajax({
+                    url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/' + itemId + '/items/order',
+                    data: model,
+                    dataType: 'json',
+                    type: 'PUT',
+                    success: function(listitems, status, request) {
+                        
+                        // We don't need to do anything here...
+
+                    },
+                    error: function(request, status, error) { console.log(error); }
+                });
             });
         }
 
@@ -219,7 +244,11 @@
                             });
 
                             $("#items").sortable({
-                                stop: updateDisplayOrder
+                                stop: updateItemDisplayOrder
+                            });
+
+                            $(".item-list").sortable({
+                                stop: updateListItemDisplayOrder
                             });
 
                         },
@@ -357,7 +386,11 @@
                         $('.content').show();
 
                         $("#items").sortable('refresh');
-                        updateDisplayOrder();
+
+                        if(type === 'listitem')
+                            updateListItemDisplayOrder();
+                        else
+                            updateItemDisplayOrder();
 
                     },
                     error: function(request, status, error) { console.log(error); }
