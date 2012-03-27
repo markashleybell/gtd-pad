@@ -184,7 +184,7 @@
             });
             // Update display order
             $.ajax({
-                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/order',
+                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/order',
                 data: model,
                 dataType: 'json',
                 type: 'PUT',
