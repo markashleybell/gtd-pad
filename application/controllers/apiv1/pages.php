@@ -117,6 +117,30 @@ class ApiV1_Pages_Controller extends Base_Controller {
         return Response::make(json_encode($page->attributes), 200, array('Content-Type' => 'application/json'));
     }
 
+    // UPDATE: PUT /pages/order
+    public function put_order()
+    {
+        // Get the existing page data
+        $pages = Page::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->get();
+
+        try
+        {
+            foreach($pages as $page)
+            {
+                $page->displayorder = Input::get('displayorder-' . $page->id);
+                $page->save();
+            }
+        }
+        catch(Exception $e)
+        {
+            // In most cases, this will be thrown if the client gets a field name wrong
+            return ApiUtils::createResponse(500, 'Server Error', 'Payload error: please check the fields you are POSTing are correctly named'); 
+        }
+
+        // Return a flag indicating success or failure
+        return ApiUtils::createResponse(200, 'OK', 'Update successful'); 
+    }
+
     // DELETE: DELETE /pages/1
     public function delete_index($id = null)
     {

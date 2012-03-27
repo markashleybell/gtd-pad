@@ -157,6 +157,26 @@
             });
         }
 
+        function updatePageNavDisplayOrder(event, ui) {
+            var model = {};
+            $('#page-navigation li').each(function(i, item){
+                model['displayorder-' + item.id.split('-')[1]] = i;
+            });
+            // Update display order
+            $.ajax({
+                url: _config.baseUrl + '/api/v1/pages/order',
+                data: model,
+                dataType: 'json',
+                type: 'PUT',
+                success: function(listitems, status, request) {
+                    
+                    // We don't need to do anything here...
+
+                },
+                error: function(request, status, error) { console.log(error); }
+            });
+        }
+
         function updateItemDisplayOrder(event, ui) {
             var model = {};
             $('.item-container').each(function(i, item){
@@ -164,7 +184,7 @@
             });
             // Update display order
             $.ajax({
-                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/order',
+                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/order',
                 data: model,
                 dataType: 'json',
                 type: 'PUT',
@@ -298,6 +318,10 @@
                         // and then append the new item to the list
                         pageNav.append(Mustache.render(_config.templates.pagenavitem, page));
                     
+                    });
+
+                    pageNav.sortable({
+                        stop: updatePageNavDisplayOrder
                     });
 
                 },
