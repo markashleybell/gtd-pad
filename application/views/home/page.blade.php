@@ -135,6 +135,28 @@
             }
         }
 
+        function addNewPage() {
+            var model = {
+                title: 'New Page',
+                displayorder: -1
+            };
+
+            // Update display order
+            $.ajax({
+                url: _config.baseUrl + '/api/v1/pages',
+                data: model,
+                dataType: 'json',
+                type: 'POST',
+                success: function(page, status, request) {
+                    
+                    // Redirect to the new page
+                    window.location.href = _config.baseUrl + '/p/' + page.id
+
+                },
+                error: function(request, status, error) { console.log(error); }
+            });
+        }
+
         function updateItemDisplayOrder(event, ui) {
             var model = {};
             $('.item-container').each(function(i, item){
@@ -395,6 +417,14 @@
                     },
                     error: function(request, status, error) { console.log(error); }
                 });
+
+            });
+
+            $('#add-page').on('click', function(event) {
+
+                event.preventDefault();
+
+                addNewPage();
 
             });
 
