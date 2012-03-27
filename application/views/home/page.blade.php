@@ -222,6 +222,48 @@
             });
         }
 
+        function deleteItem(type, delid) {
+
+            var apiCall = '';
+
+            switch(type)
+            {
+                case 'item':
+                    apiCall = '/items/' + delid;
+                    break;
+                case 'listitem':
+                    var parentId = $('#listitem-' + delid).parent().parent().attr('id').split('-')[1];
+                    apiCall = '/items/' + parentId + '/items/' + delid;
+                    break;
+                case 'page':
+                    break;
+            }
+
+            // Update display order
+            $.ajax({
+                url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + apiCall,
+                data: { id: delid },
+                dataType: 'json',
+                type: 'DELETE',
+                success: function(result, status, request) {
+                    
+                    // If we've deleted a page, redirect to the home page
+                    if(type === 'page')
+                    {
+                        window.location.href = _config.baseUrl;
+                    }
+                    else
+                    {
+                        // Remove the item
+                        $('#' + type + '-' + delid).remove();
+                    }
+
+                },
+                error: function(request, status, error) { console.log(error); }
+            });
+            
+        }
+
         // Initialise the page
         function init()
         {
@@ -473,6 +515,17 @@
                 event.preventDefault();
 
                 addForm('listitem', $(this).prev('ul'));
+
+            });
+
+
+            $('#content').on('click', '.delete-link', function(event) {
+
+                event.preventDefault();
+
+                var info = $(this).parent().parent().attr('id').split('-');
+
+                deleteItem(info[0], info[1]);
 
             });
 

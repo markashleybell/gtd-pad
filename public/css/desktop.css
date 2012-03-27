@@ -19,4 +19,4 @@ li { font-size: 14px; line-height: 20px; }
 
 ul.item-list { padding: 10px 0 0 30px; }
 
-.edit-link { font-size: 11px; }
+.edit-link, .delete-link { font-size: 11px; }
