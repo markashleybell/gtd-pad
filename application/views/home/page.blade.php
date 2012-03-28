@@ -122,6 +122,7 @@
                     model.list = 1;
                     location.prepend(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
+                    $('#item-0').append(Mustache.render(_config.templates.list, model)).find('.add-listitem').hide();
                     break;
                 case 'note':
                     model.list = 0;
@@ -465,7 +466,10 @@
                         item.find('.title').html(data.title);
                         item.find('.body').html('<p>' + data.body + '</p>');
 
-                        item.attr('id', type + '-' + data.id)
+                        item.attr('id', type + '-' + data.id);
+
+                        item.find('ul').attr('id', 'list-' + data.id);
+                        item.find('.add-listitem').show();
 
                         if(type == 'page')
                             $('#pagenav-' + id + ' a').html(data.title);
