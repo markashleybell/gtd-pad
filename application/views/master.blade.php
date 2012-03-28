@@ -18,7 +18,7 @@
 
         <div id="container">
 
-            {{ $content }}
+            @yield('content')
 
         </div>
 

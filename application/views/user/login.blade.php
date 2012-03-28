@@ -1,6 +1,6 @@
-@section('head')
-    <!-- TEST Section -->
-@endsection
+@layout('master')
+
+@section('content')
 
 {{ Form::open('user/login', 'POST') }}
 
@@ -16,3 +16,5 @@
 {{ Form::submit('Log In') }}</p>
 
 {{ Form::close() }}
+
+@endsection

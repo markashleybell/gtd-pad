@@ -16,6 +16,20 @@ return array(
 
 	'profile' => true,
 
+    /*
+    |--------------------------------------------------------------------------
+    | PDO Fetch Style
+    |--------------------------------------------------------------------------
+    |
+    | By default, database results will be returned as instances of the PHP
+    | stdClass object; however, you may wish to retrieve records as arrays
+    | instead of objects. Here you can control the PDO fetch style of the
+    | database queries run by your application.
+    |
+    */
+
+    'fetch' => PDO::FETCH_CLASS,
+
 	/*
 	|--------------------------------------------------------------------------
 	| Default Database Connection

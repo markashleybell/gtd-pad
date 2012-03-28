@@ -1,6 +1,6 @@
 <?php
 
-class Page extends Eloquent\Model 
+class Page extends Eloquent
 {
 	public static $table = 'pages';
 

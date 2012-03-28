@@ -1,6 +1,6 @@
 <?php
 
-class ListItem extends Eloquent\Model 
+class ListItem extends Eloquent 
 {
 	public static $table = 'listitems';
 }

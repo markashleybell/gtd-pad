@@ -1,8 +1,6 @@
-@section('head')
-    
+@layout('master')
 
-
-@endsection
+@section('content')
 
 <div id="navigation">
 
@@ -26,6 +24,8 @@
     <p id="load-message">Loading data</p>
 
 </div>
+
+@endsection
 
 @section('foot')
 

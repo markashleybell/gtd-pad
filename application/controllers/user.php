@@ -4,8 +4,6 @@ class User_Controller extends Base_Controller {
 
     public $restful = true;
 
-	public $layout = 'layouts.main';
-
     public function __construct()
     {
         $this->filter('before', 'csrf')->on('post');
@@ -13,7 +11,7 @@ class User_Controller extends Base_Controller {
 
     public function get_signup()
     {
-        $this->layout->content = View::make('user.signup');
+        return View::make('user.signup');
     }    
 
     public function post_signup()
@@ -63,7 +61,7 @@ class User_Controller extends Base_Controller {
 
     public function get_login()
     {
-        $this->layout->content = View::make('user.login');
+        return View::make('user.login');
     }    
 
     public function post_login()
@@ -105,8 +103,8 @@ class User_Controller extends Base_Controller {
 
     public function get_hashpassword($password)
     {
-        $this->layout->content = View::make('user.hashpassword')
-                                     ->with('hash', Hash::make($password));
+        return View::make('user.hashpassword')
+                   ->with('hash', Hash::make($password));
     }
 
 	/*public function action_session($provider)
