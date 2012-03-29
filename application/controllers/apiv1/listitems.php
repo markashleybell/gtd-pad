@@ -39,7 +39,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
                 $output[] = $item->attributes;
             }
 
-            return Response::make(json_encode($output), 200, array('Content-Type' => 'application/json'));
+            return Response::make(json_encode($output, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         }
 
         $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
@@ -47,7 +47,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         if($item == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No list item exists with the requested id');
 
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 
     // CREATE: POST /pages/1/items/1/items
@@ -81,7 +81,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         }
 
         // Return all the details of the new page as a JSON response
-        return Response::make(json_encode($item->attributes), 201, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 201, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1/items/1/items/1
@@ -110,7 +110,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         $item->save();
 
         // Return all the details of the updated page as a JSON response
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1/items/1/items/order
@@ -165,6 +165,6 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         $item->save();
 
         // Return the details of the deleted page as a JSON response
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 }

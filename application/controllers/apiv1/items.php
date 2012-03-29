@@ -30,10 +30,12 @@ class ApiV1_Items_Controller extends Base_Controller {
             $output = array();
 
             foreach ($items as $item) {
+                // Manually convert boolean int values into proper booleans
+                $item->attributes['list'] = ($item->attributes['list'] === 1) ? true : false;
                 $output[] = $item->attributes;
             }
 
-            return Response::make(json_encode($output), 200, array('Content-Type' => 'application/json'));
+            return Response::make(json_encode($output, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         }
 
         $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
@@ -41,7 +43,10 @@ class ApiV1_Items_Controller extends Base_Controller {
         if($item == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        // Manually convert boolean int values into proper booleans
+        $item->attributes['list'] = ($item->attributes['list'] === 1) ? true : false;
+
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
 
         // $fields = Input::get('fields');
 
@@ -59,7 +64,7 @@ class ApiV1_Items_Controller extends Base_Controller {
 
         //         // In this case $item is actually an array because we used get() rather than first(), 
         //         // so just return the attributes of the first element
-        //         return Response::make(json_encode($item[0]->attributes), 200, array('Content-Type' => 'application/json'));
+        //         return Response::make(json_encode($item[0]->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         //     }
         //     catch(Exception $e)
         //     {
@@ -74,7 +79,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         //     if($item == null)
         //         return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
-        //     return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        //     return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         // }
     }
 
@@ -114,7 +119,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         }
 
         // Return all the details of the new page as a JSON response
-        return Response::make(json_encode($item->attributes), 201, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 201, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1/items/1
@@ -147,7 +152,7 @@ class ApiV1_Items_Controller extends Base_Controller {
         $item->save();
 
         // Return all the details of the updated page as a JSON response
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1/items/order
@@ -202,6 +207,6 @@ class ApiV1_Items_Controller extends Base_Controller {
         $item->save();
 
         // Return the details of the deleted page as a JSON response
-        return Response::make(json_encode($item->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 }

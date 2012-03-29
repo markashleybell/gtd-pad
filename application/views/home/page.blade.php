@@ -298,7 +298,7 @@
                                 itemContainer.append(Mustache.render(_config.templates.item, item));
                             
                                 // If the item is a list
-                                if(item.list === 1)
+                                if(item.list)
                                 {
                                     // Append a list to it and get a reference to the list
                                     $('#item-' + item.id).append(Mustache.render(_config.templates.list, item));

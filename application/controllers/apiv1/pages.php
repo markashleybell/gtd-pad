@@ -23,7 +23,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
                 $output[] = $page->attributes;
             }
 
-            return Response::make(json_encode($output), 200, array('Content-Type' => 'application/json'));
+            return Response::make(json_encode($output, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         }
 
         $fields = Input::get('fields');
@@ -42,7 +42,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
 
                 // In this case $page is actually an array because we used get() rather than first(), 
                 // so just return the attributes of the first element
-                return Response::make(json_encode($page[0]->attributes), 200, array('Content-Type' => 'application/json'));
+                return Response::make(json_encode($page[0]->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
             }
             catch(Exception $e)
             {
@@ -57,7 +57,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
             if($page == null)
                 return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
-            return Response::make(json_encode($page->attributes), 200, array('Content-Type' => 'application/json'));
+            return Response::make(json_encode($page->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
         }
     }
 
@@ -90,7 +90,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
         }
 
         // Return all the details of the new page as a JSON response
-        return Response::make(json_encode($page->attributes), 201, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($page->attributes, JSON_NUMERIC_CHECK), 201, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/1
@@ -114,7 +114,7 @@ class ApiV1_Pages_Controller extends Base_Controller {
         $page->save();
 
         // Return all the details of the updated page as a JSON response
-        return Response::make(json_encode($page->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($page->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 
     // UPDATE: PUT /pages/order
@@ -161,6 +161,6 @@ class ApiV1_Pages_Controller extends Base_Controller {
         $page->save();
 
         // Return the details of the deleted page as a JSON response
-        return Response::make(json_encode($page->attributes), 200, array('Content-Type' => 'application/json'));
+        return Response::make(json_encode($page->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
     }
 }
