@@ -31,7 +31,7 @@ class ApiV1_Items_Controller extends Base_Controller {
 
             foreach ($items as $item) {
                 // Manually convert boolean int values into proper booleans
-                $item->attributes['list'] = ($item->attributes['list'] === 1) ? true : false;
+                $item->attributes['list'] = (intval($item->attributes['list']) === 1) ? true : false;
                 $output[] = $item->attributes;
             }
 
@@ -44,7 +44,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
         // Manually convert boolean int values into proper booleans
-        $item->attributes['list'] = ($item->attributes['list'] === 1) ? true : false;
+        $item->attributes['list'] = (intval($item->attributes['list']) === 1) ? true : false;
 
         return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
 
