@@ -479,6 +479,12 @@
 
                         $("#items").sortable('refresh');
 
+                        // In this case, sortable refresh doesn't seem to work for some reason,
+                        // so we destroy the existing sortable (if there is one) and re-initialise
+                        item.find(".item-list").sortable('destroy').sortable({
+                            stop: updateListItemDisplayOrder
+                        });
+
                         if(type === 'listitem')
                             updateListItemDisplayOrder();
                         else
