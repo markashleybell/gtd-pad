@@ -120,18 +120,18 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         if($pageid == null)
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a page id and a list id to update item ordering');
 
+        // Get an array of ids, in the correct order
         $idList = explode(',', Input::get('items'));
-
-        // Get the existing page data
-        $items = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where_in('id', $idList)->order_by('id', 'asc')->get();
 
         try
         {
-            $order = 0;
-
-            foreach($items as $item)
+            // Loop through all list item ids in the array, updating the display order to
+            // the current array index and the list id to the current list
+            // This makes dragging and dropping between lists possible because the parent list can be reset
+            foreach($idList as $k => $id)
             {
-                $item->displayorder = $order++;
+                $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->first();
+                $item->displayorder = $k;
                 $item->item_id = $listid;
                 $item->save();
             }
