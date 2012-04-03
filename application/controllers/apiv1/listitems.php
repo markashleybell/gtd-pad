@@ -120,14 +120,19 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         if($pageid == null)
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a page id and a list id to update item ordering');
 
+        $idList = explode(',', Input::get('items'));
+
         // Get the existing page data
-        $items = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->get();
+        $items = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where_in('id', $idList)->order_by('id', 'asc')->get();
 
         try
         {
+            $order = 0;
+
             foreach($items as $item)
             {
-                $item->displayorder = Input::get('displayorder-' . $item->id);
+                $item->displayorder = $order++;
+                $item->item_id = $listid;
                 $item->save();
             }
         }

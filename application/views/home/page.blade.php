@@ -199,18 +199,23 @@
         }
 
         function updateListItemDisplayOrder(event, ui) {
-            var model = {};
+            
             $('.item-list').each(function(i, item){
+
+                var listId = $(this).parent().attr('id').split('-')[1];
 
                 var itemId = $(this).attr('id').split('-')[1];
 
-                $('.listitem-container').each(function(i, item){
-                    model['displayorder-' + item.id.split('-')[1]] = i;
+                var itemIdList = [];
+
+                $(this).find('.listitem-container').each(function(i, item){
+                    itemIdList.push(item.id.split('-')[1]);
                 });
+
                 // Update display order
                 $.ajax({
                     url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/' + itemId + '/items/order',
-                    data: model,
+                    data: { items: itemIdList.join(',') },
                     dataType: 'json',
                     type: 'PUT',
                     success: function(listitems, status, request) {
@@ -333,6 +338,7 @@
                             });
 
                             $(".item-list").sortable({
+                                connectWith: ['.item-list'],
                                 stop: updateListItemDisplayOrder
                             });
 
@@ -482,6 +488,7 @@
                         // In this case, sortable refresh doesn't seem to work for some reason,
                         // so we destroy the existing sortable (if there is one) and re-initialise
                         item.find(".item-list").sortable('destroy').sortable({
+                            connectWith: ['.item-list'],
                             stop: updateListItemDisplayOrder
                         });
 
