@@ -134,20 +134,30 @@ class ApiV1_Items_Controller extends Base_Controller {
             return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
 
         // Get the existing page data
-        $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('page_id', '=', $pageid)->where('id', '=', $id)->first();
+        // We don't filter on page id, which allows this method to be used for updating the page an item is associated with
+        $item = Item::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('id', '=', $id)->first();
 
         // If the page doesn't exist, return a helpful message
         if($item == null)
             return ApiUtils::createResponse(404, 'Not Found', 'No item exists with the requested id');
 
         // Update the data from PUT data fields
-        $item->title = Input::get('title');
-        $item->body = Input::get('body');
-        $item->list = intval(Input::get('list'));
-        $item->page_id = $pageid;
+        if(Input::get('title') != null)
+            $item->title = Input::get('title');
+
+        if(Input::get('body') != null)
+            $item->body = Input::get('body');
+
+        if(Input::get('list') != null)
+            $item->list = intval(Input::get('list'));
 
         if(Input::get('displayorder') != null)
             $item->displayorder = Input::get('displayorder');
+
+        if($pageid != $item->page_id)
+            $item->displayorder = -1;
+
+        $item->page_id = $pageid;
 
         $item->save();
 

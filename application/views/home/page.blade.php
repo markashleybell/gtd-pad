@@ -334,6 +334,7 @@
                             });
 
                             $("#items").sortable({
+                                // connectWith: ['.page-drop'],
                                 stop: updateItemDisplayOrder
                             });
 
@@ -371,6 +372,33 @@
 
                     pageNav.sortable({
                         stop: updatePageNavDisplayOrder
+                    });
+
+                    // Allow dropping of items onto page navigation items (for
+                    // moving items to a new page)
+                    $('.page-drop').droppable({
+                        accept: '.item-container',
+                        tolerance: 'pointer',
+                        hoverClass: 'drophover',
+                        drop: function(event, ui) { 
+
+                            var itemId = ui.draggable.attr('id').split('-')[1];
+                            var newPageId = $(this).parent().attr('id').split('-')[1];
+
+                            // Update the item
+                            $.ajax({
+                                url: _config.baseUrl + '/api/v1/pages/' + newPageId + '/items/' + itemId,
+                                dataType: 'json',
+                                type: 'PUT',
+                                success: function(data, status, request) {
+                                    
+                                    // Remove the item from this page
+                                    ui.draggable.remove();
+                                },
+                                error: function(request, status, error) { console.log(error); }
+                            });
+
+                        }
                     });
 
                 },
