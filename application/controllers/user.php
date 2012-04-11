@@ -83,8 +83,9 @@ class User_Controller extends Base_Controller {
 
         $email = Input::get('email');
         $password = Input::get('password');
+        $remember = (Input::get('remember') === "1") ? true : false;
 
-        if (Auth::attempt($email, $password))
+        if (Auth::attempt($email, $password, $remember))
         {
              return Redirect::to('');
         }

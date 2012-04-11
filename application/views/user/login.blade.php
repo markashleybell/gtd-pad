@@ -12,6 +12,10 @@
 {{ Form::password('password') }}
 {{ implode(', ', $errors->get('password')) }}</p>
 
+<p>{{ Form::label('remember', 'Remember Me') }}
+{{ Form::checkbox('remember') }}
+{{ implode(', ', $errors->get('remember')) }}</p>
+
 <p>{{ Form::token() }}
 {{ Form::submit('Log In') }}</p>
 
