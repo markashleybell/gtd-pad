@@ -373,7 +373,8 @@
                     });
 
                     pageNav.sortable({
-                        stop: updatePageNavDisplayOrder
+                        stop: updatePageNavDisplayOrder,
+                        handle: '.drag-link'
                     });
 
                     // Allow dropping of items onto page navigation items (for
