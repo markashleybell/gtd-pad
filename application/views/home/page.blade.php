@@ -335,12 +335,14 @@
 
                             $("#items").sortable({
                                 // connectWith: ['.page-drop'],
-                                stop: updateItemDisplayOrder
+                                stop: updateItemDisplayOrder,
+                                handle: '.drag-link'
                             });
 
                             $(".item-list").sortable({
                                 connectWith: ['.item-list'],
-                                stop: updateListItemDisplayOrder
+                                stop: updateListItemDisplayOrder,
+                                handle: '.drag-link'
                             });
 
                         },
@@ -517,7 +519,8 @@
                         // so we destroy the existing sortable (if there is one) and re-initialise
                         item.find(".item-list").sortable('destroy').sortable({
                             connectWith: ['.item-list'],
-                            stop: updateListItemDisplayOrder
+                            stop: updateListItemDisplayOrder,
+                            handle: '.drag-link'
                         });
 
                         if(type === 'listitem')
