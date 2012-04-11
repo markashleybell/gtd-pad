@@ -109,7 +109,9 @@ class ApiV1_Pages_Controller extends Base_Controller {
 
         // Update the data from PUT data fields
         $page->title = Input::get('title');
-        $page->displayorder = Input::get('displayorder');
+
+        if(Input::get('displayorder') != null)
+            $page->displayorder = Input::get('displayorder');
 
         $page->save();
 
