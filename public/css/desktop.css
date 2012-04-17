@@ -19,6 +19,6 @@ li { font-size: 14px; line-height: 20px; }
 
 ul.item-list { padding: 10px 0 0 30px; }
 
-.edit-link, .delete-link { font-size: 11px; }
+.controls a { font-size: 11px; }
 
 .drophover { background-color: #ff0000;}
