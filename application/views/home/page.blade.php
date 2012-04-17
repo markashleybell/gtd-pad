@@ -415,7 +415,7 @@
                 $('.edit-form').remove();
                 $('.content').show();
 
-                var item = $(this).parent().parent(); // Get the parent item container of the clicked edit link
+                var item = $(this).parent().parent().parent(); // Get the parent item container of the clicked edit link
 
                 var info = item.attr('id').split('-'); // Gives us a two-element array where index 0 is the item type and 1 is the ID
 
