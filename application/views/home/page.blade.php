@@ -119,13 +119,13 @@
             switch(type)
             {
                 case 'list':
-                    model.list = 1;
+                    model.list = true;
                     location.prepend(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
                     $('#item-0').append(Mustache.render(_config.templates.list, model)).find('.add-listitem').hide();
                     break;
                 case 'note':
-                    model.list = 0;
+                    model.list = false;
                     location.prepend(Mustache.render(_config.templates.item, model));
                     $('#item-0').append(Mustache.render(_config.forms.item, model)).find('.content').hide();
                     break;
@@ -500,8 +500,8 @@
                         
                         var item = form.parent();
 
-                        item.find('.title').html(data.title);
-                        item.find('.body').html('<p>' + data.body + '</p>');
+                        item.find('> .content').children('.title').html(data.title);
+                        item.find('> .content').children('.body').html('<p>' + data.body + '</p>');
 
                         item.attr('id', type + '-' + data.id);
 
@@ -563,7 +563,7 @@
 
                 event.preventDefault();
 
-                addForm('listitem', $(this).prev('ul'));
+                addForm('listitem', $(this).parent().prev('ul'));
 
             });
 
@@ -572,7 +572,7 @@
 
                 event.preventDefault();
 
-                var info = $(this).parent().parent().attr('id').split('-');
+                var info = $(this).parent().parent().parent().attr('id').split('-');
 
                 deleteItem(info[0], info[1]);
 

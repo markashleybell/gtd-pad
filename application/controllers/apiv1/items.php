@@ -102,7 +102,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             // TODO: need some input validation here! Does Laravel help with this already?
             $item->title = Input::get('title');
             $item->body = Input::get('body');
-            $item->list = intval(Input::get('list'));
+            $item->list = (Input::get('list') === "true") ? 1 : 0;
             
             if(Input::get('displayorder') != null)
                 $item->displayorder = Input::get('displayorder');
@@ -149,7 +149,7 @@ class ApiV1_Items_Controller extends Base_Controller {
             $item->body = Input::get('body');
 
         if(Input::get('list') != null)
-            $item->list = intval(Input::get('list'));
+            $item->list = (Input::get('list') === "true") ? 1 : 0;
 
         if(Input::get('displayorder') != null)
             $item->displayorder = Input::get('displayorder');
