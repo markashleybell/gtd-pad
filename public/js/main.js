@@ -386,7 +386,7 @@ function init()
 
         var info = item.attr('id').split('-'); // Gives us a two-element array where index 0 is the item type and 1 is the ID
 
-        var content = item.find('.content'); // Get the content of the item
+        var content = item.children('.content'); // Get the content of the item
 
         // TODO: Write function to serialise/deserialise content sections to/from models
         var model = { 
@@ -396,7 +396,7 @@ function init()
             list: item.data('list')
         };
 
-        item.append(Mustache.render(_config.forms[info[0]], model));
+        content.after(Mustache.render(_config.forms[info[0]], model));
 
         content.hide();
 
