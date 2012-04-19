@@ -473,7 +473,7 @@ function init()
                 item.attr('id', type + '-' + data.id);
 
                 item.find('ul').attr('id', 'list-' + data.id);
-                item.find('.add-listitem').show();
+                item.parent().parent().find('.add-listitem').show();
 
                 if(type == 'page')
                     $('#pagenav-' + id + ' a:first').html(data.title);
@@ -529,6 +529,8 @@ function init()
     $('#content').on('click', '.add-listitem', function(event) {
 
         event.preventDefault();
+
+        $(this).hide();
 
         addForm('listitem', $(this).parent().prev('ul'));
 

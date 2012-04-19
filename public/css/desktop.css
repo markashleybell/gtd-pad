@@ -10,20 +10,22 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; }
 #add-bar ul { list-style-type: none; }
 #add-bar li { display: inline; padding: 0 10px 0 0; }
 
-h1 { font-weight: normal; font-size: 36px; padding: 20px 0 0 0; }
-h2 { font-weight: normal; font-size: 24px; padding: 20px 0 0 0; } 
-h3 { font-weight: normal; line-height: 20px; font-size: 20px; padding: 20px 0 0 0; } 
-p { font-size: 14px; line-height: 20px; padding: 5px 20px 0 0; } 
+h1 { font-weight: normal; font-size: 36px; padding: 0 0 0 0; }
+h2 { font-weight: normal; font-size: 24px; padding: 0 0 0 0; } 
+h3 { font-weight: normal; line-height: 20px; font-size: 20px; padding: 0 0 0 0; } 
+p { font-size: 14px; line-height: 20px; padding: 0 0 0 0; } 
 ul { padding: 20px 0 0 0; list-style: none;}
 li { font-size: 14px; line-height: 20px;  }
 li p { padding: 5px 0 0 0; }
 
 ul.item-list { padding: 10px 0 0 0; }
 
+.item-container { margin-top: 20px; }
+
 .content { overflow: auto; }
 
-.content .controls { background-color: #999; display: block; float: left; }
-.content p {  float: left; }
+.content .controls { background-color: #999; width: 100px; display: block; float: left; text-align: right; }
+.content p, .content h1, .content h2 { margin-left: 120px; }
 .controls a { font-size: 11px;  }
 
 .drophover { background-color: #ff0000;}
