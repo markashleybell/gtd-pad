@@ -47,7 +47,8 @@ function loadTemplates(keys, callback) {
                 _config.templates[key] = template;
                 // Call a method of the template cache object which checks if all
                 // template HTML is loaded, with a callback to fire if it is
-                _config.templatesLoaded(callback);
+                if(typeof callback !== 'undefined')
+                    _config.templatesLoaded(callback);
             });
 
         })(keys[i]);
@@ -68,7 +69,8 @@ function loadForms(keys, callback) {
                 _config.forms[key] = template;
                 // Call a method of the template cache object which checks if all
                 // template HTML is loaded, with a callback to fire if it is
-                _config.formsLoaded(callback);
+                if(typeof callback !== 'undefined')
+                    _config.formsLoaded(callback);
             });
 
         })(keys[i]);
@@ -549,11 +551,6 @@ function init()
 
 }
 
-function formSetup()
-{
-    
-}
-
 $(function(){
 
     // Get the server-side page id
@@ -562,6 +559,6 @@ $(function(){
     // Load templates and fire init function when done
     loadTemplates(['page', 'item', 'list', 'listitem', 'pagenavitem'], init);
 
-    loadForms(['page', 'item', 'listitem'], formSetup);
+    loadForms(['page', 'item', 'listitem']);
 
 });
