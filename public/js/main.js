@@ -476,7 +476,7 @@ function init()
                 item.find('.add-listitem').show();
 
                 if(type == 'page')
-                    $('#pagenav-' + id + ' a').html(data.title);
+                    $('#pagenav-' + id + ' a:first').html(data.title);
 
                 $('.edit-form').remove();
                 $('.content').show();
