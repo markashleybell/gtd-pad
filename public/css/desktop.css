@@ -21,11 +21,19 @@ li p { padding: 5px 0 0 0; }
 ul.item-list { padding: 10px 0 0 0; }
 
 .item-container { margin-top: 20px; }
+.item-container .chk {  float: left; }
 
 .content { overflow: auto; }
 
-.content .controls { background-color: #999; width: 100px; display: block; float: left; text-align: right; }
-.content p, .content h1, .content h2 { margin-left: 120px; }
-.controls a { font-size: 11px;  }
+.content .controls { background-color: #999; width: 100px; display: block; float: left; }
+.content p, .content h1, .content h2 { margin-left: 110px; }
+.controls a { display: block; width: 16px; height: 16px; font-size: 11px; float: right; }
+.listitem-container .content p { margin-left: 130px; }
+
+.chk { margin-left: 10px; }
+
+.edit-link { width: 30px; }
+.drag-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/gtd-pad/public/img/drag-handle.gif) 0 0 no-repeat; }
+.delete-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/gtd-pad/public/img/trash.gif) 0 0 no-repeat; }
 
 .drophover { background-color: #ff0000;}

@@ -28,4 +28,4 @@
 
         @yield('foot')
     </body>
-</html
+</html>
