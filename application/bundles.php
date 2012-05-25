@@ -34,5 +34,8 @@
 */
 
 return array(
+
+	'docs' => array('handles' => 'docs'),
 	'laravel-oauth2'
+
 );
