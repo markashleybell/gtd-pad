@@ -1,4 +1,4 @@
-OAuth will authenticate user within API methods
+OAuth will authenticate user within API methods (or perhaps just tokens for now?)
 
 Pages:
 ------------------------------
