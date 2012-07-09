@@ -239,6 +239,29 @@ function deleteItem(type, delid) {
     
 }
 
+function completeItem(item)
+{
+    var listItem = item.parent().parent();
+    var list = listItem.parent();
+
+    var listItemId = listItem.attr('id').split('-')[1];
+    var listId = list.attr('id').split('-')[1];
+
+    // Update display order
+    $.ajax({
+        url: _config.baseUrl + '/api/v1/pages/' + _config.pageId + '/items/' + listId + '/items/' + listItemId + '/complete',
+        data: { completed: true },
+        dataType: 'json',
+        type: 'PUT',
+        success: function(result, status, request) {
+            
+            listItem.remove();
+
+        },
+        error: function(request, status, error) { console.log(error); }
+    });
+}
+
 // Initialise the page
 function init()
 {
@@ -546,6 +569,12 @@ function init()
         var info = $(this).parent().parent().parent().attr('id').split('-');
 
         deleteItem(info[0], info[1]);
+
+    });
+
+    $('#content').on('click', '.chk', function(event) {
+
+        completeItem($(this));
 
     });
 

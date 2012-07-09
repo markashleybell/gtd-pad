@@ -31,7 +31,7 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         // If the id is null, show all list items
         if($id == null)
         {
-            $items = ListItem::where('item_id', '=', $listid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->order_by('displayorder', 'asc')->get();
+            $items = ListItem::where('item_id', '=', $listid)->where('user_id', '=', Auth::user()->id)->where('deleted', '!=', true)->where('completed', '!=', true)->order_by('displayorder', 'asc')->get();
 
             $output = array();
 
@@ -106,6 +106,34 @@ class ApiV1_ListItems_Controller extends Base_Controller {
         $item->body = Input::get('body');
         $item->item_id = $listid;
         $item->displayorder = Input::get('displayorder');
+
+        $item->save();
+
+        // Return all the details of the updated page as a JSON response
+        return Response::make(json_encode($item->attributes, JSON_NUMERIC_CHECK), 200, array('Content-Type' => 'application/json'));
+    }
+
+    // UPDATE: PUT /pages/1/items/1/items/1/complete
+    public function put_complete($pageid = null, $listid = null, $id = null)
+    {
+        // Check for page id
+        if($pageid == null || $listid == null)
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply a page id and a list id to update an item');
+
+        // Handle the lack of an ID
+        if($id == null)
+            return ApiUtils::createResponse(400, 'Bad Request', 'You must supply an id for PUT actions');
+
+        // Get the existing list item data
+        $item = ListItem::where('deleted', '!=', true)->where('user_id', '=', Auth::user()->id)->where('item_id', '=', $listid)->where('id', '=', $id)->first();
+
+        // If the page doesn't exist, return a helpful message
+        if($item == null)
+            return ApiUtils::createResponse(404, 'Not Found', 'No list item exists with the requested id');
+
+        // Update the data from PUT data fields
+        if(Input::get('completed') != null)
+            $item->completed = (Input::get('completed') === "true") ? 1 : 0;
 
         $item->save();
 

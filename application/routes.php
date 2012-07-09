@@ -33,6 +33,7 @@
 */
 
 // Special cases for the reordering call (refactor these later)
+Route::put('api/v1/pages/(:num)/items/(:num)/items/(:num)/complete', 'apiv1.listitems@complete');
 Route::put('api/v1/pages/(:num)/items/(:num)/items/order', 'apiv1.listitems@order');
 Route::put('api/v1/pages/(:num)/items/order', 'apiv1.items@order');
 Route::put('api/v1/pages/order', 'apiv1.pages@order');
