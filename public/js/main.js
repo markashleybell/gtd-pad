@@ -1,6 +1,6 @@
 var _config = { 
     pageId: 0,
-    baseUrl: '/gtd-pad/public', // TODO: Read this from Laravel config
+    baseUrl: '', // TODO: Read this from Laravel config
     templates: { // Container to hold template HTML for reuse
         page: null,
         item: null,

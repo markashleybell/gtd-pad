@@ -35,6 +35,6 @@
         _pageId = {{$pageid}};
 
     </script>
-    <script type="text/javascript" src="/gtd-pad/public/js/main.js?v={{time()}}"></script>
+    <script type="text/javascript" src="/js/main.js?v={{time()}}"></script>
 
 @endsection

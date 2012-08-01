@@ -41,7 +41,7 @@ ul.item-list { padding: 10px 0 0 0; }
 .chk { margin-left: 10px; }
 
 .controls a.edit-link { width: 25px; vertical-align: baseline; text-align: center; }
-.drag-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/gtd-pad/public/img/drag-handle.gif) center center no-repeat; }
-.delete-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/gtd-pad/public/img/trash.gif) center center no-repeat; }
+.drag-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/img/drag-handle.gif) center center no-repeat; }
+.delete-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/img/trash.gif) center center no-repeat; }
 
 .drophover { background-color: #ff0000;}
