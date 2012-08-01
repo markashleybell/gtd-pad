@@ -101,6 +101,7 @@ function addForm(type, location) {
         case 'listitem':
             location.append(Mustache.render(_config.templates.listitem, model));
             $('#listitem-0').append(Mustache.render(_config.forms.listitem, model)).find('.content').hide();
+            $('#edit-listitem-0').find('input[type=text]').focus();
             break;
     }
 }
@@ -498,7 +499,6 @@ function init()
                 item.attr('id', type + '-' + data.id);
 
                 item.find('ul').attr('id', 'list-' + data.id);
-                item.parent().parent().find('.add-listitem').show();
 
                 if(type == 'page')
                     $('#pagenav-' + id + ' a:first').html(data.title);
@@ -517,9 +517,14 @@ function init()
                 });
 
                 if(type === 'listitem')
+                {
                     updateListItemDisplayOrder();
+                    addForm('listitem', $('#list-' + data.item_id));
+                }
                 else
+                {
                     updateItemDisplayOrder();
+                }
 
             },
             error: function(request, status, error) { console.log(error); }
@@ -561,6 +566,14 @@ function init()
 
     });
 
+    $('#content').on('click', '.cancel-listitem', function(event) {
+
+        event.preventDefault();
+
+        $(this).parent().parent().parent().parent().find('.add-listitem').show();
+        $('.edit-form, #listitem-0').remove();
+
+    });
 
     $('#content').on('click', '.delete-link', function(event) {
 
