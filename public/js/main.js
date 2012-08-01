@@ -494,6 +494,7 @@ function init()
                 var item = form.parent();
 
                 item.find('> .content').children('.title').html(data.title);
+                //item.find('> .content').children('.body').html('<p>' + autoLink(data.body) + '</p>');
                 item.find('> .content').children('.body').html('<p>' + data.body + '</p>');
 
                 item.attr('id', type + '-' + data.id);
@@ -591,6 +592,11 @@ function init()
 
     });
 
+}
+
+function autoLink(input)
+{
+    return input.replace(/(^|\s+)((https?|ftp|dict):[^\'">\s]+)($|\s+)/img, '$1<a href="$2">$2</a>$4');
 }
 
 $(function(){
