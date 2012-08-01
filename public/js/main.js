@@ -293,7 +293,8 @@ function init()
                     $.each(items, function(i, item){
 
                         // Render an item template for each item, passing its JSON model in as a view model
-                        itemContainer.append(Mustache.render(_config.templates.item, item));
+                        var itemHtml = Mustache.render(_config.templates.item, item);
+                        itemContainer.append(autoLink(itemHtml));
                     
                         // If the item is a list
                         if(item.list)
@@ -315,7 +316,9 @@ function init()
 
                                         // Render an item template for each item, passing its JSON model in as a view model
                                         // and then append the new item to the list
-                                        listContainer.append(Mustache.render(_config.templates.listitem, listitem));
+                                        var listItemHtml = Mustache.render(_config.templates.listitem, listitem);
+                                        // Auto-link the item
+                                        listContainer.append(autoLink(listItemHtml));
                                     
                                     });
 
@@ -418,7 +421,7 @@ function init()
         var model = { 
             id: info[1], 
             title: content.find('h1, h2').html(), 
-            body: content.find('p').html(),
+            body: removeLink(content.find('p').html()),
             list: item.data('list')
         };
 
@@ -494,8 +497,9 @@ function init()
                 var item = form.parent();
 
                 item.find('> .content').children('.title').html(data.title);
-                //item.find('> .content').children('.body').html('<p>' + autoLink(data.body) + '</p>');
-                item.find('> .content').children('.body').html('<p>' + data.body + '</p>');
+
+                // Auto-link the edited item body
+                item.find('> .content').children('.body').html('<p>' + autoLink(data.body) + '</p>');
 
                 item.attr('id', type + '-' + data.id);
 
@@ -596,7 +600,14 @@ function init()
 
 function autoLink(input)
 {
-    return input.replace(/(^|\s+)((https?|ftp|dict):[^\'">\s]+)($|\s+)/img, '$1<a href="$2">$2</a>$4');
+    return input.replace(/((?:https?|ftp|dict):\/\/[A-Z0-9\.\\/\-\_#]+)/img, function(match, group) {
+        return '<a href="' + group + '">' + ((group.length > 50) ? group.substring(0, 85) + '...' : group) + '</a>';
+    });
+}
+
+function removeLink(input)
+{
+    return input.replace(/<a href="(.*?)">(.*?)<\/a>/img, '$1');
 }
 
 $(function(){
