@@ -525,7 +525,8 @@ function init()
                 if(type === 'listitem')
                 {
                     updateListItemDisplayOrder();
-                    addForm('listitem', $('#list-' + data.item_id));
+                    if(method === 'POST') // Don't re-show the new item form unless we just added an item
+                        addForm('listitem', $('#list-' + data.item_id));
                 }
                 else
                 {
