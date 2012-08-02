@@ -509,6 +509,7 @@ function init()
                     $('#pagenav-' + id + ' a:first').html(data.title);
 
                 $('.edit-form').remove();
+                $('.add-listitem').show();
                 $('.content').show();
 
                 $("#items").sortable('refresh');
