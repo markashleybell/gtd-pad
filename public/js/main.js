@@ -603,8 +603,8 @@ function init()
 function autoLink(input)
 {
     if(input == null) return null;
-    return input.replace(/((?:https?|ftp|dict):\/\/[A-Z0-9\.\\/\-\_#]+)/img, function(match, group) {
-        return '<a href="' + group + '">' + ((group.length > 50) ? group.substring(0, 85) + '...' : group) + '</a>';
+    return input.replace(/((?:https?|ftp|dict):\/\/[^\s]+)/img, function(match, group) {
+        return '<a href="' + group + '">' + ((group.length > 85) ? group.substring(0, 85) + '...' : group) + '</a>';
     });
 }
 
