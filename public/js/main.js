@@ -85,6 +85,12 @@ function addForm(type, location) {
         body: ''
     };
 
+    //$('#item-0, #listitem-0, #edit-listitem-0').remove();
+    //$('.add-listitem').show();
+
+    $('.edit-form, #listitem-0').remove();
+    $('.add-listitem').show();
+
     switch(type)
     {
         case 'list':
@@ -101,6 +107,7 @@ function addForm(type, location) {
         case 'listitem':
             location.append(Mustache.render(_config.templates.listitem, model));
             $('#listitem-0').append(Mustache.render(_config.forms.listitem, model)).find('.content').hide();
+            $('#listitem-0').parent().parent().find('.add-listitem').hide();
             $('#edit-listitem-0').find('input[type=text]').focus();
             break;
     }
