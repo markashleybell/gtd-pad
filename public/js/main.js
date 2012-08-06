@@ -586,6 +586,7 @@ function init()
 
         $(this).parent().parent().parent().parent().find('.add-listitem').show();
         $('.edit-form, #listitem-0').remove();
+        $('.content').show();
 
     });
 
