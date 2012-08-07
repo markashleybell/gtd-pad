@@ -44,4 +44,9 @@ ul.item-list { padding: 10px 0 0 0; }
 .drag-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/img/drag-handle.gif) center center no-repeat; }
 .delete-link { text-indent: -1000em; outline: none; overflow: hidden; background: url(/img/trash.gif) center center no-repeat; }
 
-.drophover { background-color: #ff0000;}
+.drophover { background-color: #ff0000; }
+
+.page-container .edit-form { margin-left: 67px; }
+.item-container .edit-form { margin-left: 67px; }
+.item-list .edit-form { margin-left: 87px; }
+.item-list li { margin-top:2px; }
