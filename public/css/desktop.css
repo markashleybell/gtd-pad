@@ -2,10 +2,10 @@ body, h1, h2, h3, p, ul, ol, li, form, blockquote { margin: 0; padding: 0; }
 body { font-family: Arial, Helvetica, sans-serif; color: #000; }
 
 #header { width: 960px; margin: 0 auto; }
-#container { width: 960px; margin: 0 auto; }
+#container { width: 960px; margin: 0 auto; overflow: auto; padding: 0 0 80px 0; }
 
-#navigation { width: 260px; float: right; }
-#content { width: 700px; float: left; }
+#navigation { width: 260px; float: right; overflow: auto; }
+#content { width: 700px; float: left; overflow: auto; }
 
 #add-bar ul { list-style-type: none; }
 #add-bar li { display: inline; padding: 0 10px 0 0; }
