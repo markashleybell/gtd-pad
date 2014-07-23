@@ -1,2 +1,8 @@
-favicon.*
+*.sublime-workspace
+*.zip
+*.cfg
+*.cfg.live
 .DS_Store
+*.crx
+*.pem
+kippt-export/*.sql
