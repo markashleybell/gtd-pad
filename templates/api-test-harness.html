@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+    <head>
+        <title>API Test Harness</title>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/themes/github.min.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript">
+
+            var json = {
+                page: {
+                    title: "Test Page",
+                    displayorder: 10,
+                    user_id: 1,
+                    deleted: 0
+                },
+                item: {
+                    title: "Test Item",
+                    body: "Test Item Body",
+                    list: false,
+                    displayorder: 10,
+                    page_id: 1,
+                    user_id: 1,
+                    deleted: 0
+                },
+                listitem: {
+                    body: "Test List Item Body",
+                    displayorder: 10,
+                    item_id: 1,
+                    user_id: 1,
+                    deleted: 0
+                },
+                user: {
+                    email: "test@test.com"
+                }
+            };
+
+            var baseUrl = '/api/v1';
+
+            function makeApiCall(event) {
+                event.preventDefault();
+
+                var f = $(this);
+                var payload = f.find('#requestbody').val();
+
+                var body = (payload != '') ? JSON.parse(payload) : {};
+
+                $.ajax({
+                    url: baseUrl + f.find('#url').val(),
+                    type: f.find('#method').val(),
+                    dataType: 'json',
+                    data: body,
+                    error: function (request, status, error) { 
+                        var output = JSON.stringify(JSON.parse(request.responseText), undefined, 4);
+                        $('#console').removeClass('rainbow').html(output);
+                        Rainbow.color();
+                    },
+                    success: function (data, status, request) {
+                        var output = JSON.stringify(data, undefined, 4);
+                        $('#console').removeClass('rainbow').html(output);
+                        Rainbow.color();
+                    }
+                });
+            }
+
+            function setRequestBody(type) {
+                $('#requestbody').val(JSON.stringify(json[type]));
+                return false;
+            }
+
+            $(function(){
+                $('#api-form').on('submit', makeApiCall);
+                Rainbow.color();
+            });
+
+        </script>
+    </head>
+    <body>
+
+        <form action="" method="post" id="api-form">
+
+            <p><select name="method" id="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+            </select>
+            <input type="text" name="url" id="url" value="/pages" /></p>
+
+            <p><a href="#" onclick="setRequestBody('page'); return false;">Page</a> | 
+            <a href="#" onclick="setRequestBody('item'); return false;">Item</a> | 
+            <a href="#" onclick="setRequestBody('listitem'); return false;">List Item</a> | 
+            <a href="#" onclick="setRequestBody('user'); return false;">User</a></p>
+
+            <p><textarea name="requestbody" id="requestbody" rows="10" cols="50"></textarea></p>
+
+            <p><input type="submit" value="Submit" /></p>
+
+        </form>
+
+        <pre><code id="console" data-language="javascript">{ 
+    "payload" : null 
+}</code></pre>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/rainbow.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/language/generic.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/language/javascript.js"></script>
+    </body>
+</html>
