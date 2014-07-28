@@ -3,31 +3,24 @@
     <head>
         <title>API Test Harness</title>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <link href="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/themes/github.min.css" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='css/github.css') }}" rel="stylesheet" type="text/css">
         <script type="text/javascript">
 
             var json = {
                 page: {
                     title: "Test Page",
-                    displayorder: 10,
-                    user_id: 1,
-                    deleted: 0
+                    displayorder: 10
                 },
                 item: {
                     title: "Test Item",
                     body: "Test Item Body",
-                    list: false,
-                    displayorder: 10,
-                    page_id: 1,
-                    user_id: 1,
-                    deleted: 0
+                    itemtype_id: 1,
+                    displayorder: 10
                 },
                 listitem: {
                     body: "Test List Item Body",
                     displayorder: 10,
-                    item_id: 1,
-                    user_id: 1,
-                    deleted: 0
+                    item_id: 1
                 },
                 user: {
                     email: "test@test.com"
@@ -48,7 +41,8 @@
                     url: baseUrl + f.find('#url').val(),
                     type: f.find('#method').val(),
                     dataType: 'json',
-                    data: body,
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(body),
                     error: function (request, status, error) { 
                         var output = JSON.stringify(JSON.parse(request.responseText), undefined, 4);
                         $('#console').removeClass('rainbow').html(output);
@@ -100,8 +94,6 @@
         <pre><code id="console" data-language="javascript">{ 
     "payload" : null 
 }</code></pre>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/rainbow.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/language/generic.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/rainbow/1.1.8/js/language/javascript.js"></script>
+        <script src="{{ url_for('static', filename='js/rainbow-custom.min.js') }}"></script>
     </body>
 </html>

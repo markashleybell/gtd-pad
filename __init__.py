@@ -75,36 +75,53 @@ connection_pool = ThreadedConnectionPool(1, 20, app.config['CONNECTION_STRING'])
 @app.route('/')
 @app.route('/<int:id>')
 @login_required
-def page(id=1):
+def index(id=1):
     pagedata = None
 
     with get_connection() as conn:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT title FROM pages WHERE id = %s', [id])
+        cur.execute('SELECT title FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
         pagedata = cur.fetchone()
 
     return render_template('page.html', pagedata=pagedata)
 
 
 @app.route('/api/v1/pages', methods=['GET'])
-def get_pages():
+@login_required
+def read_pages():
     pages = None
 
     with get_connection() as conn:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT * FROM pages WHERE deleted = False', [])
+        cur.execute('SELECT * FROM pages WHERE deleted = False AND user_id = %s', [current_user.id])
         pages = cur.fetchall()
 
     return ApiResponse(pages)
 
 
+@app.route('/api/v1/pages', methods=['POST'])
+@login_required
+def create_page():
+    title = request.json["title"]
+    displayorder = request.json["displayorder"]
+    pageid = None
+
+    with get_connection() as conn:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute('INSERT INTO pages (title, displayorder, user_id) VALUES (%s, %s, %s) RETURNING id', [title, displayorder, current_user.id])
+        pageid = cur.fetchone()['id']
+
+    return ApiResponse({ 'id': pageid })
+
+
 @app.route('/api/v1/pages/<int:id>', methods=['GET'])
-def get_page(id):
+@login_required
+def read_page(id):
     page = None
 
     with get_connection() as conn:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT * FROM pages WHERE id = %s AND deleted = False', [id])
+        cur.execute('SELECT * FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
         page = cur.fetchone()
 
     if page is None:
@@ -113,13 +130,41 @@ def get_page(id):
     return ApiResponse(page)
 
 
+@app.route('/api/v1/pages/<int:id>', methods=['PUT'])
+@login_required
+def update_page(id):
+    title = request.json["title"]
+    displayorder = request.json["displayorder"]
+    ## pageid = None
+
+    with get_connection() as conn:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute('UPDATE pages SET title = %s, displayorder = %s WHERE id = %s AND deleted = False AND user_id = %s', [title, displayorder, id, current_user.id])
+        ## pageid = cur.fetchone()['id']
+
+    return ApiResponse()
+
+
+@app.route('/api/v1/pages/<int:id>', methods=['DELETE'])
+@login_required
+def delete_page(id):
+    ## pageid = None
+
+    with get_connection() as conn:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute('DELETE FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
+        ## pageid = cur.fetchone()['id']
+
+    return ApiResponse()
+
+
 @app.route('/login', methods=['POST'])
 def do_login():
     username = request.form['username']
     password = request.form['password']
     next = request.form['next']
-
     userdetails = None
+
     with get_connection() as conn:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute('SELECT id, password FROM users WHERE username = %s', [username])
