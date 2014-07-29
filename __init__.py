@@ -72,16 +72,39 @@ def load_user(userid):
 connection_pool = ThreadedConnectionPool(1, 20, app.config['CONNECTION_STRING'])
 
 
+def get_cursor(conn, sql, parameters):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute(sql, parameters)
+    return cur
+
+
+def get_records(sql, parameters):
+    output = None
+    with get_connection() as conn:
+        output = get_cursor(conn, sql, parameters).fetchall()
+    return output
+
+
+def get_record(sql, parameters):
+    output = None
+    with get_connection() as conn:
+        output = get_cursor(conn, sql, parameters).fetchone()
+    return output
+
+
+def execute_and_return_id(sql, parameters):
+    output = None
+    with get_connection() as conn:
+        output = get_cursor(conn, sql, parameters).fetchone()['id']
+    return output
+
+
 @app.route('/')
 @app.route('/<int:id>')
 @login_required
 def index(id=1):
-    pagedata = None
-
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT title FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
-        pagedata = cur.fetchone()
+    pagedata = get_record('SELECT title FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
+                          [id, current_user.id])
 
     return render_template('page.html', pagedata=pagedata)
 
@@ -89,12 +112,8 @@ def index(id=1):
 @app.route('/api/v1/pages', methods=['GET'])
 @login_required
 def read_pages():
-    pages = None
-
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT * FROM pages WHERE deleted = False AND user_id = %s', [current_user.id])
-        pages = cur.fetchall()
+    pages = get_records('SELECT * FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder',
+                        [current_user.id])
 
     return ApiResponse(pages)
 
@@ -104,12 +123,8 @@ def read_pages():
 def create_page():
     title = request.json["title"]
     displayorder = request.json["displayorder"]
-    pageid = None
-
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('INSERT INTO pages (title, displayorder, user_id) VALUES (%s, %s, %s) RETURNING id', [title, displayorder, current_user.id])
-        pageid = cur.fetchone()['id']
+    pageid = execute_and_return_id('INSERT INTO pages (title, displayorder, user_id) VALUES (%s, %s, %s) RETURNING id',
+                                   [title, displayorder, current_user.id])
 
     return ApiResponse({ 'id': pageid })
 
@@ -117,12 +132,8 @@ def create_page():
 @app.route('/api/v1/pages/<int:id>', methods=['GET'])
 @login_required
 def read_page(id):
-    page = None
-
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('SELECT * FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
-        page = cur.fetchone()
+    page = get_record('SELECT * FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
+                      [id, current_user.id])
 
     if page is None:
         return ApiResponse(message='Not Found', status_code=404)
@@ -135,27 +146,19 @@ def read_page(id):
 def update_page(id):
     title = request.json["title"]
     displayorder = request.json["displayorder"]
-    ## pageid = None
+    pageid = execute_and_return_id('UPDATE pages SET title = %s, displayorder = %s WHERE id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [title, displayorder, id, current_user.id])
 
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('UPDATE pages SET title = %s, displayorder = %s WHERE id = %s AND deleted = False AND user_id = %s', [title, displayorder, id, current_user.id])
-        ## pageid = cur.fetchone()['id']
-
-    return ApiResponse()
+    return ApiResponse({ 'id': pageid })
 
 
 @app.route('/api/v1/pages/<int:id>', methods=['DELETE'])
 @login_required
 def delete_page(id):
-    ## pageid = None
-
-    with get_connection() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cur.execute('DELETE FROM pages WHERE id = %s AND deleted = False AND user_id = %s', [id, current_user.id])
-        ## pageid = cur.fetchone()['id']
-
-    return ApiResponse()
+    pageid = execute_and_return_id('DELETE FROM pages WHERE id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [id, current_user.id])
+    
+    return ApiResponse({ 'id': pageid })
 
 
 @app.route('/login', methods=['POST'])
