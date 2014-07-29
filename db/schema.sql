@@ -55,6 +55,7 @@ CREATE TABLE items
   id serial NOT NULL,
   title character varying(256) NOT NULL,
   body text NULL,
+  page_id int NOT NULL REFERENCES pages(id),
   itemtype_id int NOT NULL REFERENCES itemtypes(id),
   displayorder int NOT NULL DEFAULT -1,
   deleted boolean NOT NULL DEFAULT false,
@@ -131,10 +132,10 @@ VALUES
 
 -- Insert test items
 INSERT INTO items
-    (id, title, body, itemtype_id, displayorder, user_id)
+    (id, title, body, itemtype_id, page_id, displayorder, user_id)
 VALUES
-    (1, 'Test List', 'This is a test list.', 1, 0, 1),
-    (2, 'Test Note', 'This is a test note.', 2, 1, 1);
+    (1, 'Test List', 'This is a test list.', 1, 1, 0, 1),
+    (2, 'Test Note', 'This is a test note.', 2, 1, 1, 1);
 
 
 -- Insert test list items

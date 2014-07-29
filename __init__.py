@@ -99,6 +99,9 @@ def execute_and_return_id(sql, parameters):
     return output
 
 
+# PAGES
+
+
 @app.route('/')
 @app.route('/<int:id>')
 @login_required
@@ -159,6 +162,66 @@ def delete_page(id):
                                    [id, current_user.id])
     
     return ApiResponse({ 'id': pageid })
+
+
+# ITEMS
+
+
+@app.route('/api/v1/pages/<int:pageid>/items', methods=['GET'])
+@login_required
+def read_items(pageid):
+    items = get_records('SELECT * FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
+                        [pageid, current_user.id])
+
+    return ApiResponse(items)
+
+
+@app.route('/api/v1/pages/<int:pageid>/items', methods=['POST'])
+@login_required
+def create_item(pageid):
+    title = request.json["title"]
+    body = request.json["body"]
+    itemtype_id = request.json["itemtype_id"]
+    displayorder = request.json["displayorder"]
+    itemid = execute_and_return_id('INSERT INTO items (title, body, displayorder, itemtype_id, page_id, user_id) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id',
+                                   [title, body, displayorder, itemtype_id, pageid, current_user.id])
+
+    return ApiResponse({ 'id': itemid })
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
+@login_required
+def read_item(pageid, id):
+    item = get_record('SELECT * FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
+                      [id, pageid, current_user.id])
+
+    if item is None:
+        return ApiResponse(message='Not Found', status_code=404)
+
+    return ApiResponse(item)
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['PUT'])
+@login_required
+def update_item(pageid, id):
+    title = request.json["title"]
+    body = request.json["body"]
+    page_id = request.json["page_id"]
+    itemtype_id = request.json["itemtype_id"]
+    displayorder = request.json["displayorder"]
+    itemid = execute_and_return_id('UPDATE items SET title = %s, body = %s, itemtype_id = %s, page_id = %s, displayorder = %s WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [title, body, itemtype_id, page_id, displayorder, id, current_user.id, pageid])
+
+    return ApiResponse({ 'id': itemid })
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['DELETE'])
+@login_required
+def delete_item(pageid, id):
+    itemid = execute_and_return_id('DELETE FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [id, pageid, current_user.id])
+    
+    return ApiResponse({ 'id': itemid })
 
 
 @app.route('/login', methods=['POST'])
