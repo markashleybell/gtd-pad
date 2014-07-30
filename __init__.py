@@ -99,7 +99,7 @@ def execute_and_return_id(sql, parameters):
     return output
 
 
-# PAGES
+# WEB
 
 
 @app.route('/')
@@ -110,6 +110,9 @@ def index(id=1):
                           [id, current_user.id])
 
     return render_template('page.html', pagedata=pagedata)
+
+
+# PAGES API
 
 
 @app.route('/api/v1/pages', methods=['GET'])
@@ -164,7 +167,7 @@ def delete_page(id):
     return ApiResponse({ 'id': pageid })
 
 
-# ITEMS
+# ITEMS API
 
 
 @app.route('/api/v1/pages/<int:pageid>/items', methods=['GET'])
@@ -210,7 +213,7 @@ def update_item(pageid, id):
     itemtype_id = request.json["itemtype_id"]
     displayorder = request.json["displayorder"]
     itemid = execute_and_return_id('UPDATE items SET title = %s, body = %s, itemtype_id = %s, page_id = %s, displayorder = %s WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [title, body, itemtype_id, page_id, displayorder, id, current_user.id, pageid])
+                                   [title, body, itemtype_id, page_id, displayorder, id, pageid, current_user.id])
 
     return ApiResponse({ 'id': itemid })
 
@@ -220,6 +223,62 @@ def update_item(pageid, id):
 def delete_item(pageid, id):
     itemid = execute_and_return_id('DELETE FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
                                    [id, pageid, current_user.id])
+    
+    return ApiResponse({ 'id': itemid })
+
+
+# LIST ITEMS API
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['GET'])
+@login_required
+def read_listitems(pageid, itemid):
+    listitems = get_records('SELECT * FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder',
+                            [itemid, current_user.id])
+
+    return ApiResponse(listitems)
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['POST'])
+@login_required
+def create_listitem(pageid, itemid):
+    body = request.json["body"]
+    displayorder = request.json["displayorder"]
+    listitemid = execute_and_return_id('INSERT INTO listitems (body, displayorder, item_id, user_id) VALUES (%s, %s, %s, %s) RETURNING id',
+                                       [body, displayorder, itemid, current_user.id])
+
+    return ApiResponse({ 'id': listitemid })
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
+@login_required
+def read_listitem(pageid, itemid, id):
+    listitem = get_record('SELECT * FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s',
+                          [id, itemid, current_user.id])
+
+    if listitem is None:
+        return ApiResponse(message='Not Found', status_code=404)
+
+    return ApiResponse(listitem)
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['PUT'])
+@login_required
+def update_listitem(pageid, itemid, id):
+    body = request.json["body"]
+    item_id = request.json["item_id"]
+    displayorder = request.json["displayorder"]
+    itemid = execute_and_return_id('UPDATE listitems SET body = %s, item_id = %s, displayorder = %s WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [body, item_id, displayorder, id, itemid, current_user.id])
+
+    return ApiResponse({ 'id': itemid })
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['DELETE'])
+@login_required
+def delete_listitem(pageid, itemid, id):
+    itemid = execute_and_return_id('DELETE FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s RETURNING id',
+                                   [id, itemid, current_user.id])
     
     return ApiResponse({ 'id': itemid })
 
