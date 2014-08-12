@@ -45,8 +45,16 @@
         </div> <!-- /container -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
         {% block script %}{% endblock %}
-        <script id="update-link-template" type="text/x-handlebars-template"></script>
+        {% raw %}
+        <script id="pages-menu-template" type="text/x-handlebars-template">
+            <ul>
+                {{#each payload}}
+                <li><a href="{{id}}">{{title}}</a></li>
+                {{/each}}
+            </ul>
+        </script>
+        {% endraw %}
     </body>
 </html>

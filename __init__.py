@@ -283,6 +283,11 @@ def delete_listitem(pageid, itemid, id):
     return ApiResponse({ 'id': itemid })
 
 
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template('login.html', next=request.args['next'])
+    
+
 @app.route('/login', methods=['POST'])
 def do_login():
     username = request.form['username']

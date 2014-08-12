@@ -12,10 +12,18 @@
 
     <div class="col-md-3">
 
-        <p>SIDEBAR</p>
+        <div id="sidebar">
+            <p>Loading...</p>
+        </div>
 
     </div>
 
 </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 {% endblock %}
