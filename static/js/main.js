@@ -50,8 +50,24 @@ var GTDPad = (function($, window, undefined) {
         _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
 
         _ajaxGet('/pages', null, function(data, status, request) { 
-            console.log(data);
+            // console.log(data);
             _ui.pagesMenu.html(_templates.pagesMenu(data));
+            $.each(data.payload, function(i, page) {
+                // console.log(item);
+                _ajaxGet('/pages/' + page.id + '/items', null, function(data, status, request) {
+                    $.each(data.payload, function(i, item) { 
+                        // console.log(item);
+                        // If it's a list, also load the items
+                        if(item.itemtype_id === 1) {
+                            _ajaxGet('/pages/' + page.id + '/items/' + item.id + '/listitems', null, function(data, status, request) {
+                                $.each(data.payload, function(i, listitem) { 
+                                    console.log(listitem);
+                                });
+                            });
+                        }
+                    });
+                });
+            });
         });
     };
 

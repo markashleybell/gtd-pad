@@ -105,7 +105,11 @@ def execute_and_return_id(sql, parameters):
 @app.route('/')
 @app.route('/<int:id>')
 @login_required
-def index(id=1):
+def index(id=None):
+    if id is None:
+        id = execute_and_return_id('SELECT id FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder LIMIT 1',
+                                   [current_user.id])
+
     pagedata = get_record('SELECT title FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
                           [id, current_user.id])
 
@@ -118,7 +122,10 @@ def index(id=1):
 @app.route('/api/v1/pages', methods=['GET'])
 @login_required
 def read_pages():
-    pages = get_records('SELECT * FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder',
+    full = request.args.get('full')
+    # children = request.args.get('children')
+    fields = '*' if full == 'true' else 'id, title'
+    pages = get_records('SELECT ' + fields + ' FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder',
                         [current_user.id])
 
     return ApiResponse(pages)

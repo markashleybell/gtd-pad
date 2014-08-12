@@ -39,11 +39,11 @@
                 var body = (payload != '') ? JSON.parse(payload) : {};
 
                 $.ajax({
-                    url: baseUrl + f.find('#url').val(),
+                    url: baseUrl + f.find('#url').val() + f.find('#querystring').val(),
                     type: f.find('#method').val(),
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(body),
+                    data: (f.find('#method').val() == 'GET') ? null : JSON.stringify(body),
                     error: function (request, status, error) { 
                         var output = JSON.stringify(JSON.parse(request.responseText), undefined, 4);
                         $('#console').removeClass('rainbow').html(output);
@@ -79,7 +79,8 @@
                 <option value="PUT">PUT</option>
                 <option value="DELETE">DELETE</option>
             </select>
-            <input type="text" name="url" id="url" value="/pages" /></p>
+            <input type="text" name="url" id="url" value="/pages" />
+            <input type="text" name="querystring" id="querystring" value="?full=true" /></p>
 
             <p><a href="#" onclick="setRequestBody('page'); return false;">Page</a> | 
             <a href="#" onclick="setRequestBody('item'); return false;">Item</a> | 
