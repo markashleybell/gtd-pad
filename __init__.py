@@ -153,6 +153,12 @@ def read_page(id):
     if page is None:
         return ApiResponse(message='Not Found', status_code=404)
 
+    children = request.args.get('children')
+
+    if children == 'true':
+        page['items'] = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
+                        [id, current_user.id])
+
     return ApiResponse(page)
 
 
@@ -182,7 +188,7 @@ def delete_page(id):
 @app.route('/api/v1/pages/<int:pageid>/items', methods=['GET'])
 @login_required
 def read_items(pageid):
-    items = get_records('SELECT ' + get_api_fields('id, title, body') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
+    items = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
                         [pageid, current_user.id])
 
     return ApiResponse(items)
@@ -204,7 +210,7 @@ def create_item(pageid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
 @login_required
 def read_item(pageid, id):
-    item = get_record('SELECT ' + get_api_fields('id, title, body') + ' FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
+    item = get_record('SELECT ' + get_api_fields('id, title, body, itemtype_id') + ' FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
                       [id, pageid, current_user.id])
 
     if item is None:
