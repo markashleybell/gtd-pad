@@ -2,10 +2,14 @@ var GTDPad = (function($, window, undefined) {
 
     var _apiBaseUrl = '/api/v1',
         _ui = {
-            pagesMenu: null
+            pagesMenu: null,
+            pageContainer: null
         },
         _templates = {
-            pagesMenu: null
+            pagesMenu: null,
+            page: null,
+            item: null,
+            listitem: null
         };
 
     var _defaultAjaxErrorCallback = function (request, status, error) {
@@ -47,6 +51,7 @@ var GTDPad = (function($, window, undefined) {
 
     var init = function() {
         _ui.pagesMenu = $('#sidebar');
+        _ui.pageContainer = $('#page-container');
         _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
 
         _ajaxGet('/pages', null, function(data, status, request) { 
@@ -78,6 +83,10 @@ var GTDPad = (function($, window, undefined) {
 }(jQuery, window, undefined));
 
 $(function(){
+
+    Handlebars.registerHelper('islist', function(id, options) {
+        return (id === 1) ? options.fn(this) : options.inverse(this)
+    });
 
     GTDPad.init();
 

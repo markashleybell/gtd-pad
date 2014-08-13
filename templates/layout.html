@@ -55,6 +55,28 @@
                 {{/each}}
             </ul>
         </script>
+        <script id="page-template" type="text/x-handlebars-template">
+            <h1>{{title}}</h1>
+            {{#each items}}
+                {{> item}}
+            {{/each}}
+        </script>
+        <script id="item-template" type="text/x-handlebars-template">
+            <div id="item-{{id}}">
+                <h2>{{title}}</h2>
+                {{#if body}}
+                <p>{{body}}</p>
+                {{/if}}
+                {{#islist itemtype_id}}
+                    {{#each listitems}}
+                        {{> listitem}}
+                    {{/each}}
+                {{/islist}}
+            </ul>
+        </script>
+        <script id="listitem-template" type="text/x-handlebars-template">
+            <li><a href="{{id}}">{{body}}</a></li>
+        </script>
         {% endraw %}
     </body>
 </html>
