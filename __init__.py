@@ -99,6 +99,11 @@ def execute_and_return_id(sql, parameters):
     return output
 
 
+def get_api_fields(fields):
+    full = request.args.get('full')
+    return '*' if full == 'true' else fields
+
+
 # WEB
 
 
@@ -122,10 +127,7 @@ def index(id=None):
 @app.route('/api/v1/pages', methods=['GET'])
 @login_required
 def read_pages():
-    full = request.args.get('full')
-    # children = request.args.get('children')
-    fields = '*' if full == 'true' else 'id, title'
-    pages = get_records('SELECT ' + fields + ' FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder',
+    pages = get_records('SELECT ' + get_api_fields('id, title') + ' FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder',
                         [current_user.id])
 
     return ApiResponse(pages)
@@ -145,7 +147,7 @@ def create_page():
 @app.route('/api/v1/pages/<int:id>', methods=['GET'])
 @login_required
 def read_page(id):
-    page = get_record('SELECT * FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
+    page = get_record('SELECT ' + get_api_fields('id, title') + ' FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
                       [id, current_user.id])
 
     if page is None:
@@ -180,7 +182,7 @@ def delete_page(id):
 @app.route('/api/v1/pages/<int:pageid>/items', methods=['GET'])
 @login_required
 def read_items(pageid):
-    items = get_records('SELECT * FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
+    items = get_records('SELECT ' + get_api_fields('id, title, body') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
                         [pageid, current_user.id])
 
     return ApiResponse(items)
@@ -202,7 +204,7 @@ def create_item(pageid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
 @login_required
 def read_item(pageid, id):
-    item = get_record('SELECT * FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
+    item = get_record('SELECT ' + get_api_fields('id, title, body') + ' FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
                       [id, pageid, current_user.id])
 
     if item is None:
@@ -240,7 +242,7 @@ def delete_item(pageid, id):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['GET'])
 @login_required
 def read_listitems(pageid, itemid):
-    listitems = get_records('SELECT * FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder',
+    listitems = get_records('SELECT ' + get_api_fields('id, body') + ' FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder',
                             [itemid, current_user.id])
 
     return ApiResponse(listitems)
@@ -260,7 +262,7 @@ def create_listitem(pageid, itemid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
 @login_required
 def read_listitem(pageid, itemid, id):
-    listitem = get_record('SELECT * FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s',
+    listitem = get_record('SELECT ' + get_api_fields('id, body') + ' FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s',
                           [id, itemid, current_user.id])
 
     if listitem is None:
