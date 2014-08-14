@@ -50,28 +50,44 @@ var GTDPad = (function($, window, undefined) {
     };
 
     var init = function() {
+
+        Handlebars.registerHelper('islist', function(id, options) {
+            return (id === 1) ? options.fn(this) : options.inverse(this)
+        });
+
         _ui.pagesMenu = $('#sidebar');
         _ui.pageContainer = $('#page-container');
         _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
+        _templates.page = Handlebars.compile($('#page-template').html());
+
+        Handlebars.registerPartial('item', $('#item-template').html());
+        Handlebars.registerPartial('listitem', $('#listitem-template').html());
+
+        // _ajaxGet('/pages', null, function(data, status, request) { 
+        //     // console.log(data);
+        //     _ui.pagesMenu.html(_templates.pagesMenu(data));
+        //     $.each(data.payload, function(i, page) {
+        //         // console.log(item);
+        //         _ajaxGet('/pages/' + page.id + '/items', null, function(data, status, request) {
+        //             $.each(data.payload, function(i, item) { 
+        //                 // console.log(item);
+        //                 // If it's a list, also load the items
+        //                 if(item.itemtype_id === 1) {
+        //                     _ajaxGet('/pages/' + page.id + '/items/' + item.id + '/listitems', null, function(data, status, request) {
+        //                         $.each(data.payload, function(i, listitem) { 
+        //                             console.log(listitem);
+        //                         });
+        //                     });
+        //                 }
+        //             });
+        //         });
+        //     });
+        // });
 
         _ajaxGet('/pages', null, function(data, status, request) { 
-            // console.log(data);
             _ui.pagesMenu.html(_templates.pagesMenu(data));
-            $.each(data.payload, function(i, page) {
-                // console.log(item);
-                _ajaxGet('/pages/' + page.id + '/items', null, function(data, status, request) {
-                    $.each(data.payload, function(i, item) { 
-                        // console.log(item);
-                        // If it's a list, also load the items
-                        if(item.itemtype_id === 1) {
-                            _ajaxGet('/pages/' + page.id + '/items/' + item.id + '/listitems', null, function(data, status, request) {
-                                $.each(data.payload, function(i, listitem) { 
-                                    console.log(listitem);
-                                });
-                            });
-                        }
-                    });
-                });
+            _ajaxGet('/pages/' + data.payload[0].id + '?children=true', null, function(data, status, request) { 
+                _ui.pageContainer.html(_templates.page(data.payload));
             });
         });
     };
@@ -83,10 +99,6 @@ var GTDPad = (function($, window, undefined) {
 }(jQuery, window, undefined));
 
 $(function(){
-
-    Handlebars.registerHelper('islist', function(id, options) {
-        return (id === 1) ? options.fn(this) : options.inverse(this)
-    });
 
     GTDPad.init();
 

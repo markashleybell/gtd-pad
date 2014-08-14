@@ -159,6 +159,11 @@ def read_page(id):
         page['items'] = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
                         [id, current_user.id])
 
+        for item in page['items']:
+            if item['itemtype_id'] == 1:
+                item['listitems'] = get_records('SELECT ' + get_api_fields('id, body') + ' FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder',
+                                                [item['id'], current_user.id])
+
     return ApiResponse(page)
 
 
