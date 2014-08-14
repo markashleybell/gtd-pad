@@ -23,5 +23,13 @@
 {% block script %}
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script type="text/javascript">
+    $(function(){
+
+        GTDPad.init();
+        GTDPad.loadPage({{id}});
+
+    });
+</script>
 
 {% endblock %}

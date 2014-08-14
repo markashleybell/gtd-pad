@@ -1,6 +1,7 @@
 var GTDPad = (function($, window, undefined) {
 
     var _apiBaseUrl = '/api/v1',
+        _pageId = null,
         _ui = {
             pagesMenu: null,
             pageContainer: null
@@ -49,20 +50,10 @@ var GTDPad = (function($, window, undefined) {
         _ajaxRequest('DELETE', url, data, successCallback, errorCallback);
     };
 
-    var init = function() {
+    var _loadPage = function(id) {
+        _pageId = id;
 
-        Handlebars.registerHelper('islist', function(id, options) {
-            return (id === 1) ? options.fn(this) : options.inverse(this)
-        });
-
-        _ui.pagesMenu = $('#sidebar');
-        _ui.pageContainer = $('#page-container');
-        _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
-        _templates.page = Handlebars.compile($('#page-template').html());
-
-        Handlebars.registerPartial('item', $('#item-template').html());
-        Handlebars.registerPartial('listitem', $('#listitem-template').html());
-
+        // Load each level of the hierarchy individually
         // _ajaxGet('/pages', null, function(data, status, request) { 
         //     // console.log(data);
         //     _ui.pagesMenu.html(_templates.pagesMenu(data));
@@ -84,22 +75,33 @@ var GTDPad = (function($, window, undefined) {
         //     });
         // });
 
+        // Load all the data for this page, including child items and grandchild listitems
+        _ajaxGet('/pages/' + _pageId + '?children=true', null, function(data, status, request) { 
+            _ui.pageContainer.html(_templates.page(data.payload));
+        });
+        // Load the list of all pages and populate the sidebar menu
         _ajaxGet('/pages', null, function(data, status, request) { 
             _ui.pagesMenu.html(_templates.pagesMenu(data));
-            _ajaxGet('/pages/' + data.payload[0].id + '?children=true', null, function(data, status, request) { 
-                _ui.pageContainer.html(_templates.page(data.payload));
-            });
         });
     };
 
+    var _init = function() {
+        Handlebars.registerHelper('islist', function(id, options) {
+            return (id === 1) ? options.fn(this) : options.inverse(this)
+        });
+
+        _ui.pagesMenu = $('#sidebar');
+        _ui.pageContainer = $('#page-container');
+        _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
+        _templates.page = Handlebars.compile($('#page-template').html());
+
+        Handlebars.registerPartial('item', $('#item-template').html());
+        Handlebars.registerPartial('listitem', $('#listitem-template').html());
+    };
+
     return {
-        init: init
+        init: _init,
+        loadPage: _loadPage
     };
 
 }(jQuery, window, undefined));
-
-$(function(){
-
-    GTDPad.init();
-
-});

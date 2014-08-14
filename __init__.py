@@ -111,14 +111,12 @@ def get_api_fields(fields):
 @app.route('/<int:id>')
 @login_required
 def index(id=None):
+    # If no page ID is passed in, just get the ID of the first page
     if id is None:
         id = execute_and_return_id('SELECT id FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder LIMIT 1',
                                    [current_user.id])
 
-    pagedata = get_record('SELECT title FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
-                          [id, current_user.id])
-
-    return render_template('page.html', pagedata=pagedata)
+    return render_template('page.html', id=id)
 
 
 # PAGES API
@@ -153,12 +151,13 @@ def read_page(id):
     if page is None:
         return ApiResponse(message='Not Found', status_code=404)
 
-    children = request.args.get('children')
-
-    if children == 'true':
+    # TODO: Optimise data retrieval, one query per hierarchical level
+    # If children have been requested
+    if request.args.get('children') == 'true':
+        # Get all the items for the page
         page['items'] = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder',
                         [id, current_user.id])
-
+        # Get all the list items for any lists
         for item in page['items']:
             if item['itemtype_id'] == 1:
                 item['listitems'] = get_records('SELECT ' + get_api_fields('id, body') + ' FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder',
