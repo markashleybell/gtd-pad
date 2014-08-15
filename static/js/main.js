@@ -86,8 +86,8 @@ var GTDPad = (function($, window, undefined) {
     };
 
     var _init = function() {
-        Handlebars.registerHelper('islist', function(id, options) {
-            return (id === 1) ? options.fn(this) : options.inverse(this)
+        Handlebars.registerHelper('islist', function(options) {
+            return (this.itemtype_id === 1) ? options.fn(this) : options.inverse(this)
         });
 
         _ui.pagesMenu = $('#sidebar');
