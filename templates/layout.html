@@ -46,12 +46,13 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.history.js') }}"></script>
         {% block script %}{% endblock %}
         {% raw %}
         <script id="pages-menu-template" type="text/x-handlebars-template">
             <ul>
                 {{#each payload}}
-                <li><a href="{{id}}">{{title}}</a></li>
+                <li><a data-pageid="{{id}}" href="/{{id}}">{{title}}</a></li>
                 {{/each}}
             </ul>
         </script>

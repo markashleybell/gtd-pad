@@ -1,16 +1,16 @@
-var GTDPad = (function($, window, undefined) {
-
-    var _apiBaseUrl = '/api/v1',
-        _pageId = null,
-        _ui = {
+var GTDPad = (function($, window, undefined, History, Handlebars) {
+    // Private member variables
+    var _apiBaseUrl = '/api/v1', // API versioning
+        _pageId = null, // ID of the currently loaded page
+        // Container for cached HTML selectors
+        _ui = { 
             pagesMenu: null,
             pageContainer: null
         },
+        // Container for compiled Handlebars templates
         _templates = {
             pagesMenu: null,
-            page: null,
-            item: null,
-            listitem: null
+            page: null
         };
 
     var _defaultAjaxErrorCallback = function (request, status, error) {
@@ -52,56 +52,63 @@ var GTDPad = (function($, window, undefined) {
 
     var _loadPage = function(id) {
         _pageId = id;
-
-        // Load each level of the hierarchy individually
-        // _ajaxGet('/pages', null, function(data, status, request) { 
-        //     // console.log(data);
-        //     _ui.pagesMenu.html(_templates.pagesMenu(data));
-        //     $.each(data.payload, function(i, page) {
-        //         // console.log(item);
-        //         _ajaxGet('/pages/' + page.id + '/items', null, function(data, status, request) {
-        //             $.each(data.payload, function(i, item) { 
-        //                 // console.log(item);
-        //                 // If it's a list, also load the items
-        //                 if(item.itemtype_id === 1) {
-        //                     _ajaxGet('/pages/' + page.id + '/items/' + item.id + '/listitems', null, function(data, status, request) {
-        //                         $.each(data.payload, function(i, listitem) { 
-        //                             console.log(listitem);
-        //                         });
-        //                     });
-        //                 }
-        //             });
-        //         });
-        //     });
-        // });
-
         // Load all the data for this page, including child items and grandchild listitems
         _ajaxGet('/pages/' + _pageId + '?children=true', null, function(data, status, request) { 
-            _ui.pageContainer.html(_templates.page(data.payload));
+            var page = data.payload;
+            _ui.pageContainer.html(_templates.page(page));
         });
+    };
+
+    var _loadPagesMenu = function(callback) {
         // Load the list of all pages and populate the sidebar menu
         _ajaxGet('/pages', null, function(data, status, request) { 
             _ui.pagesMenu.html(_templates.pagesMenu(data));
+            if(typeof callback !== 'undefined') {
+                callback();
+            }
         });
     };
 
-    var _init = function() {
+    var _init = function(id) {
+        // Register Handlebars helper to determine whether an item is a list
         Handlebars.registerHelper('islist', function(options) {
             return (this.itemtype_id === 1) ? options.fn(this) : options.inverse(this)
         });
-
-        _ui.pagesMenu = $('#sidebar');
-        _ui.pageContainer = $('#page-container');
-        _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
-        _templates.page = Handlebars.compile($('#page-template').html());
-
+        // Register partial views
         Handlebars.registerPartial('item', $('#item-template').html());
         Handlebars.registerPartial('listitem', $('#listitem-template').html());
+        // Cache some selectors
+        _ui.pagesMenu = $('#sidebar');
+        _ui.pageContainer = $('#page-container');
+        // Compile Handlebars templates
+        _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
+        _templates.page = Handlebars.compile($('#page-template').html());
+        // Handle page menu item click
+        _ui.pagesMenu.on('click', 'a', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var id = a.data('pageid');
+            var title = a.text();
+            History.pushState({ id: id, title: title }, title, '/' + id);
+        });
+        // Bind to History.js state change
+        $(window).bind('statechange', function() {
+            // Log the state
+            var state = History.getState(); 
+            // console.log('statechange:', state.data, state.title, state.url);
+            _loadPage(state.data.id);
+        });
+        // Initially load the pages menu
+        _loadPagesMenu(function() {
+            // Load the page automatically once the menu has loaded
+            _ui.pagesMenu.find('a[data-pageid=' + id + ']').trigger('click');
+        });
+
+        _loadPage(id);
     };
 
     return {
-        init: _init,
-        loadPage: _loadPage
+        init: _init
     };
 
-}(jQuery, window, undefined));
+}(jQuery, window, undefined, History, Handlebars));
