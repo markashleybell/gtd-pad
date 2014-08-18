@@ -19,7 +19,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
 
     var _ajaxRequest = function (type, url, data, successCallback, errorCallback) {
         // If no error callback is explicitly supplied, pass in the default error callback
-        if (typeof errorCallback === 'undefined' || errorCallback === null) {
+        if (errorCallback === null || typeof errorCallback !== 'function') {
             errorCallback = _defaultAjaxErrorCallback;
         }
 
@@ -50,12 +50,15 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         _ajaxRequest('DELETE', url, data, successCallback, errorCallback);
     };
 
-    var _loadPage = function(id) {
+    var _loadPage = function(id, callback) {
         _pageId = id;
         // Load all the data for this page, including child items and grandchild listitems
         _ajaxGet('/pages/' + _pageId + '?children=true', null, function(data, status, request) { 
             var page = data.payload;
             _ui.pageContainer.html(_templates.page(page));
+            if(typeof callback === 'function') {
+                callback();
+            }
         });
     };
 
@@ -63,7 +66,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         // Load the list of all pages and populate the sidebar menu
         _ajaxGet('/pages', null, function(data, status, request) { 
             _ui.pagesMenu.html(_templates.pagesMenu(data));
-            if(typeof callback !== 'undefined') {
+            if(typeof callback === 'function') {
                 callback();
             }
         });
@@ -91,20 +94,29 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var title = a.text();
             History.pushState({ id: id, title: title }, title, '/' + id);
         });
-        // Bind to History.js state change
-        $(window).bind('statechange', function() {
-            // Log the state
-            var state = History.getState(); 
-            // console.log('statechange:', state.data, state.title, state.url);
-            _loadPage(state.data.id);
-        });
         // Initially load the pages menu
         _loadPagesMenu(function() {
-            // Load the page automatically once the menu has loaded
-            _ui.pagesMenu.find('a[data-pageid=' + id + ']').trigger('click');
+            // Get the initial title from the page link to avoid an additional request
+            var title = _ui.pagesMenu.find('a[data-pageid=' + id + ']').text();
+            // Add the initial page to the history state
+            History.pushState({ id: id, title: title }, title, '/'); 
+            console.log('initstatechange:', state.data, state.title, state.url);
+            // Load the page
+            _loadPage(id, function() {
+                // Bind to History.js state change event, but only once the first page has 
+                // loaded, as we've already manually updated the state for the initial page
+                $(window).bind('statechange', function() {
+                    // Log the state
+                    var state = History.getState(); 
+                    console.log('statechange:', state.data, state.title, state.url);
+                    // Load the page
+                    _loadPage(state.data.id);
+                });
+            });
         });
 
-        _loadPage(id);
+        var state = History.getState(); 
+        console.log('initial:', state.data, state.title, state.url);
     };
 
     return {
