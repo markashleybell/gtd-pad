@@ -50,11 +50,16 @@
         {% block script %}{% endblock %}
         {% raw %}
         <script id="pages-menu-template" type="text/x-handlebars-template">
-            <ul>
-                {{#each payload}}
-                <li><a data-pageid="{{id}}" href="/{{id}}">{{title}}</a></li>
-                {{/each}}
-            </ul>
+            <div class="controls">
+                <a href="#" class="add-link page">New Page</a> 
+            </div>
+            <div class="content">
+                <ul>
+                    {{#each payload}}
+                    <li><a data-pageid="{{id}}" href="/{{id}}">{{title}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
         </script>
         <script id="page-template" type="text/x-handlebars-template">
             <div id="item-{{id}}">
@@ -69,6 +74,16 @@
                     {{/each}}
                 </div>
             </div>
+        </script>
+        <script id="page-form-template" type="text/x-handlebars-template">
+            <form class="form-inline edit-form page" id="edit-page-{{id}}" role="form" action="">
+                <div class="form-group">
+                    <label class="sr-only" for="title">Title</label>
+                    <input class="form-control" type="text" id="title" name="title" value="{{title}}" placeholder="Page Title" /> 
+                    <input type="hidden" id="displayorder" name="displayorder" value="{{displayorder}}" /> 
+                </div>
+                <input class="btn btn-primary" type="submit" value="Save" />
+            </form>
         </script>
         <script id="item-template" type="text/x-handlebars-template">
             <div id="item-{{id}}">

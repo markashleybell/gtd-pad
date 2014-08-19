@@ -10,8 +10,27 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         // Container for compiled Handlebars templates
         _templates = {
             pagesMenu: null,
-            page: null
+            page: null,
+            pageForm: null,
+            itemForm: null,
+            listItemForm: null
         };
+
+    _serializeObject = function($form) {
+        var o = {};
+        var a = $form.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 
     var _defaultAjaxErrorCallback = function (request, status, error) {
         alert('Http Error: ' + status + ' - ' + error);
@@ -86,13 +105,29 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         // Compile Handlebars templates
         _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
         _templates.page = Handlebars.compile($('#page-template').html());
+        _templates.pageForm = Handlebars.compile($('#page-form-template').html());
         // Handle page menu item click
-        _ui.pagesMenu.on('click', 'a', function(e) {
+        _ui.pagesMenu.on('click', 'li > a', function(e) {
             e.preventDefault();
             var a = $(this);
             var id = a.data('pageid');
             var title = a.text();
             History.pushState({ id: id, title: title }, title, '/' + id);
+        });
+        // Handle add page link click
+        _ui.pagesMenu.on('click', 'a.add-link.page', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var controls = a.parent();
+            controls.after(_templates.pageForm({ displayorder: -1 })).hide();
+        });
+        // Handle new page form submit
+        _ui.pagesMenu.on('submit', 'form.edit-form.page', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            _ajaxPost('/pages', _serializeObject(form), function(data, status, request) { 
+                _loadPagesMenu();
+            });
         });
         // Initially load the pages menu
         _loadPagesMenu(function() {
