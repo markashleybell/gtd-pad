@@ -2,6 +2,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
     // Private member variables
     var _apiBaseUrl = '/api/v1', // API versioning
         _pageId = null, // ID of the currently loaded page
+        _log = [], // Array to hold log info
         // Container for cached HTML selectors
         _ui = { 
             pagesMenu: null,
@@ -115,18 +116,48 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             History.pushState({ id: id, title: title }, title, '/' + id);
         });
         // Handle add page link click
-        _ui.pagesMenu.on('click', 'a.add-link.page', function(e) {
+        _ui.pagesMenu.on('click', 'a.add.page', function(e) {
             e.preventDefault();
             var a = $(this);
             var controls = a.parent();
             controls.after(_templates.pageForm({ displayorder: -1 })).hide();
         });
         // Handle new page form submit
-        _ui.pagesMenu.on('submit', 'form.edit-form.page', function(e) {
+        _ui.pagesMenu.on('submit', 'form.form-page', function(e) {
             e.preventDefault();
             var form = $(this);
             _ajaxPost('/pages', _serializeObject(form), function(data, status, request) { 
                 _loadPagesMenu();
+            });
+        });
+        // Handle page edit form submit
+        _ui.pageContainer.on('submit', 'form.form-page', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var id = form.data('pageid');
+            var pageData = _serializeObject(form);
+            _ajaxPut('/pages/' + id, pageData, function(data, status, request) { 
+                _loadPagesMenu();
+                form.prev('.controls').show();
+                form.remove();
+                $('#page-' + id + ' > .content > h1').html(pageData.title);
+            });
+        });
+        // Handle page edit link click
+        _ui.pageContainer.on('click', 'div.controls.page > a.edit', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var controls = a.parent();
+            _ajaxGet('/pages/' + a.data('pageid'), null, function(data, status, request) { 
+                controls.after(_templates.pageForm(data.payload)).hide();
+            });
+        });
+        // Handle page delete link click
+        _ui.pageContainer.on('click', 'div.controls.page > a.delete', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            _ajaxDelete('/pages/' + a.data('pageid'), null, function(data, status, request) { 
+                window.location = '/';
             });
         });
         // Initially load the pages menu
@@ -135,7 +166,6 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var title = _ui.pagesMenu.find('a[data-pageid=' + id + ']').text();
             // Add the initial page to the history state
             History.pushState({ id: id, title: title }, title, '/'); 
-            console.log('initstatechange:', state.data, state.title, state.url);
             // Load the page
             _loadPage(id, function() {
                 // Bind to History.js state change event, but only once the first page has 
@@ -143,15 +173,11 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
                 $(window).bind('statechange', function() {
                     // Log the state
                     var state = History.getState(); 
-                    console.log('statechange:', state.data, state.title, state.url);
                     // Load the page
                     _loadPage(state.data.id);
                 });
             });
         });
-
-        var state = History.getState(); 
-        console.log('initial:', state.data, state.title, state.url);
     };
 
     return {

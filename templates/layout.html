@@ -51,7 +51,7 @@
         {% raw %}
         <script id="pages-menu-template" type="text/x-handlebars-template">
             <div class="controls">
-                <a href="#" class="add-link page">New Page</a> 
+                <a href="#" class="add page">New Page</a> 
             </div>
             <div class="content">
                 <ul>
@@ -62,10 +62,10 @@
             </div>
         </script>
         <script id="page-template" type="text/x-handlebars-template">
-            <div id="item-{{id}}">
-                <div class="controls">
-                    <a href="#" class="edit-link">Edit</a> 
-                    <a href="#" class="delete-link">Delete</a>
+            <div id="page-{{id}}">
+                <div class="controls page">
+                    <a href="#" class="edit" data-pageid="{{id}}">Edit</a> 
+                    <a href="#" class="delete" data-pageid="{{id}}">Delete</a>
                 </div>
                 <div class="content">
                     <h1>{{title}}</h1>
@@ -76,7 +76,7 @@
             </div>
         </script>
         <script id="page-form-template" type="text/x-handlebars-template">
-            <form class="form-inline edit-form page" id="edit-page-{{id}}" role="form" action="">
+            <form class="form-inline form-page" role="form" action="" data-pageid="{{id}}">
                 <div class="form-group">
                     <label class="sr-only" for="title">Title</label>
                     <input class="form-control" type="text" id="title" name="title" value="{{title}}" placeholder="Page Title" /> 
@@ -88,8 +88,8 @@
         <script id="item-template" type="text/x-handlebars-template">
             <div id="item-{{id}}">
                 <div class="controls">
-                    <a href="#" class="edit-link">Edit</a> 
-                    <a href="#" class="delete-link">Delete</a>
+                    <a href="#" class="edit">Edit</a> 
+                    <a href="#" class="delete">Delete</a>
                 </div>
                 <div class="content">
                     <h2>{{title}}</h2>
@@ -109,8 +109,8 @@
         <script id="listitem-template" type="text/x-handlebars-template">
             <li id="listitem-{{id}}">
                 <div class="controls">
-                    <a href="#" class="edit-link">Edit</a> 
-                    <a href="#" class="delete-link">Delete</a>
+                    <a href="#" class="edit">Edit</a> 
+                    <a href="#" class="delete">Delete</a>
                 </div>
                 <div class="content">
                     {{body}}
