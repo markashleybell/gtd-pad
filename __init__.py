@@ -159,39 +159,37 @@ def get_insert_query(fields, table):
           RETURNING 
               id
           """
-    return sql.format(table, ','.join(fields), ','.join(['%s' for f in fields]))
+    return sql.format(table, ', '.join(fields), ', '.join(['%s' for f in fields]))
 
 
 def get_update_query(fields, table):
     sql = """
-          SELECT 
+          UPDATE
               {0}
-          FROM 
+          SET
               {1}
-          WHERE 
-              deleted = False 
-          AND 
+          WHERE
+              deleted = False
+          AND
               user_id = %s 
           AND
               id = %s
+          RETURNING
+              id
           """
-    return sql.format(fields, table)
+    return sql.format(table, ', '.join([f + ' = %s' for f in fields]))
 
 
-def get_delete_query(fields, table):
+def get_delete_query(table):
     sql = """
-          SELECT 
+          DELETE FROM
               {0}
-          FROM 
-              {1}
-          WHERE 
-              deleted = False 
-          AND 
+          WHERE
               user_id = %s 
           AND
               id = %s
           """
-    return sql.format(fields, table)
+    return sql.format(table)
 
 
 # WEB
@@ -265,8 +263,8 @@ def read_page(id):
 def update_page(id):
     title = request.json["title"]
     displayorder = request.json["displayorder"]
-    pageid = execute_and_return_id('UPDATE pages SET title = %s, displayorder = %s WHERE id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [title, displayorder, id, current_user.id])
+    sql = get_update_query(['title', 'displayorder'], 'pages')
+    pageid = execute_and_return_id(sql, [title, displayorder, current_user.id, id])
 
     return ApiResponse({ 'id': pageid })
 
@@ -325,10 +323,9 @@ def update_item(pageid, id):
     title = request.json["title"]
     body = request.json["body"]
     page_id = request.json["page_id"]
-    itemtype_id = request.json["itemtype_id"]
     displayorder = request.json["displayorder"]
-    itemid = execute_and_return_id('UPDATE items SET title = %s, body = %s, itemtype_id = %s, page_id = %s, displayorder = %s WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [title, body, itemtype_id, page_id, displayorder, id, pageid, current_user.id])
+    sql = get_update_query(['title', 'body', 'page_id', 'displayorder'], 'items')
+    itemid = execute_and_return_id(sql, [title, body, page_id, displayorder, current_user.id, id])
 
     return ApiResponse({ 'id': itemid })
 
@@ -385,8 +382,8 @@ def update_listitem(pageid, itemid, id):
     body = request.json["body"]
     item_id = request.json["item_id"]
     displayorder = request.json["displayorder"]
-    itemid = execute_and_return_id('UPDATE listitems SET body = %s, item_id = %s, displayorder = %s WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [body, item_id, displayorder, id, itemid, current_user.id])
+    sql = get_update_query(['body', 'item_id', 'displayorder'], 'listitems')
+    itemid = execute_and_return_id(sql, [body, item_id, displayorder, current_user.id, id])
 
     return ApiResponse({ 'id': itemid })
 
