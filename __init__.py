@@ -149,6 +149,51 @@ def get_select_multiple_query(fields, table, filter=None):
                """
         return sql.format(fields, table)
 
+
+def get_insert_query(fields, table):
+    sql = """
+          INSERT INTO {0}
+              ({1})
+          VALUES
+              ({2})
+          RETURNING 
+              id
+          """
+    return sql.format(table, ','.join(fields), ','.join(['%s' for f in fields]))
+
+
+def get_update_query(fields, table):
+    sql = """
+          SELECT 
+              {0}
+          FROM 
+              {1}
+          WHERE 
+              deleted = False 
+          AND 
+              user_id = %s 
+          AND
+              id = %s
+          """
+    return sql.format(fields, table)
+
+
+def get_delete_query(fields, table):
+    sql = """
+          SELECT 
+              {0}
+          FROM 
+              {1}
+          WHERE 
+              deleted = False 
+          AND 
+              user_id = %s 
+          AND
+              id = %s
+          """
+    return sql.format(fields, table)
+
+
 # WEB
 
 
@@ -182,8 +227,8 @@ def read_pages():
 def create_page():
     title = request.json["title"]
     displayorder = request.json["displayorder"]
-    pageid = execute_and_return_id('INSERT INTO pages (title, displayorder, user_id) VALUES (%s, %s, %s) RETURNING id',
-                                   [title, displayorder, current_user.id])
+    sql = get_insert_query(['title', 'displayorder', 'user_id'], 'pages')
+    pageid = execute_and_return_id(sql, [title, displayorder, current_user.id])
 
     return ApiResponse({ 'id': pageid })
 
@@ -255,8 +300,8 @@ def create_item(pageid):
     body = request.json["body"]
     itemtype_id = request.json["itemtype_id"]
     displayorder = request.json["displayorder"]
-    itemid = execute_and_return_id('INSERT INTO items (title, body, displayorder, itemtype_id, page_id, user_id) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id',
-                                   [title, body, displayorder, itemtype_id, pageid, current_user.id])
+    sql = get_insert_query(['title', 'body', 'displayorder', 'itemtype_id', 'page_id', 'user_id'], 'items')
+    itemid = execute_and_return_id(sql, [title, body, displayorder, itemtype_id, pageid, current_user.id])
 
     return ApiResponse({ 'id': itemid })
 
@@ -315,8 +360,8 @@ def read_listitems(pageid, itemid):
 def create_listitem(pageid, itemid):
     body = request.json["body"]
     displayorder = request.json["displayorder"]
-    listitemid = execute_and_return_id('INSERT INTO listitems (body, displayorder, item_id, user_id) VALUES (%s, %s, %s, %s) RETURNING id',
-                                       [body, displayorder, itemid, current_user.id])
+    sql = get_insert_query(['body', 'displayorder', 'item_id', 'user_id'], 'listitems')
+    listitemid = execute_and_return_id(sql, [body, displayorder, itemid, current_user.id])
 
     return ApiResponse({ 'id': listitemid })
 
