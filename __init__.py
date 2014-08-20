@@ -52,7 +52,9 @@ class User(UserMixin):
 
 class ApiResponse(Response):
     def __init__(self, payload=None, status_code=200, message='OK'):
-        Response.__init__(self, json.dumps({ 'status': status_code, 'message': message, 'payload': payload }, cls=JSONEncoder, indent=4, separators=(',', ': ')), status=status_code, mimetype='application/json')
+        data = { 'status': status_code, 'message': message, 'payload': payload }
+        encoded = json.dumps(data, cls=JSONEncoder, indent=4, separators=(',', ': '))
+        Response.__init__(self, encoded, status=status_code, mimetype='application/json')
 
 
 @login_manager.user_loader
@@ -104,6 +106,49 @@ def get_api_fields(fields):
     return '*' if full == 'true' else fields
 
 
+def get_select_single_query(fields, table):
+    sql = """
+          SELECT 
+              {0}
+          FROM 
+              {1}
+          WHERE 
+              deleted = False 
+          AND 
+              user_id = %s 
+          AND
+              id = %s
+          """
+    return sql.format(fields, table)
+
+
+def get_select_multiple_query(fields, table, filter=None):
+    sql = """
+          SELECT 
+              {0}
+          FROM 
+              {1}
+          WHERE 
+              deleted = False 
+          AND 
+              user_id = %s 
+          """
+
+    if filter is not None:
+        sql += """
+               AND 
+                   {2} = %s
+               ORDER BY 
+                   displayorder, created_at
+               """
+        return sql.format(fields, table, filter)
+    else:
+        sql += """
+               ORDER BY 
+                   displayorder, created_at
+               """
+        return sql.format(fields, table)
+
 # WEB
 
 
@@ -125,8 +170,9 @@ def index(id=None):
 @app.route('/api/v1/pages', methods=['GET'])
 @login_required
 def read_pages():
-    pages = get_records('SELECT ' + get_api_fields('id, title, displayorder') + ' FROM pages WHERE deleted = False AND user_id = %s ORDER BY displayorder, created_at',
-                        [current_user.id])
+    fields = get_api_fields('id, title, displayorder')
+    sql = get_select_multiple_query(fields, 'pages')
+    pages = get_records(sql, [current_user.id])
 
     return ApiResponse(pages)
 
@@ -145,8 +191,9 @@ def create_page():
 @app.route('/api/v1/pages/<int:id>', methods=['GET'])
 @login_required
 def read_page(id):
-    page = get_record('SELECT ' + get_api_fields('id, title, displayorder') + ' FROM pages WHERE id = %s AND deleted = False AND user_id = %s',
-                      [id, current_user.id])
+    fields = get_api_fields('id, title, displayorder')
+    sql = get_select_single_query(fields, 'pages')
+    page = get_record(sql, [current_user.id, id])
 
     if page is None:
         return ApiResponse(message='Not Found', status_code=404)
@@ -155,13 +202,15 @@ def read_page(id):
     # If children have been requested
     if request.args.get('children') == 'true':
         # Get all the items for the page
-        page['items'] = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id, displayorder') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder, created_at',
-                        [id, current_user.id])
+        fields = get_api_fields('id, title, body, itemtype_id, displayorder')
+        sql = get_select_multiple_query(fields, 'items', 'page_id')
+        page['items'] = get_records(sql, [current_user.id, id])
         # Get all the list items for any lists
         for item in page['items']:
+            fields = get_api_fields('id, body, displayorder')
+            sql = get_select_multiple_query(fields, 'listitems', 'item_id')
             if item['itemtype_id'] == 1:
-                item['listitems'] = get_records('SELECT ' + get_api_fields('id, body, displayorder') + ' FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder, created_at',
-                                                [item['id'], current_user.id])
+                item['listitems'] = get_records(sql, [current_user.id, item['id']])
 
     return ApiResponse(page)
 
@@ -192,8 +241,9 @@ def delete_page(id):
 @app.route('/api/v1/pages/<int:pageid>/items', methods=['GET'])
 @login_required
 def read_items(pageid):
-    items = get_records('SELECT ' + get_api_fields('id, title, body, itemtype_id, displayorder') + ' FROM items WHERE deleted = False AND page_id = %s AND user_id = %s ORDER BY displayorder, created_at',
-                        [pageid, current_user.id])
+    fields = get_api_fields('id, title, body, itemtype_id, displayorder')
+    sql = get_select_multiple_query(fields, 'items', 'page_id')
+    items = get_records(sql, [current_user.id, pageid])
 
     return ApiResponse(items)
 
@@ -214,8 +264,9 @@ def create_item(pageid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
 @login_required
 def read_item(pageid, id):
-    item = get_record('SELECT ' + get_api_fields('id, title, body, itemtype_id, displayorder') + ' FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s',
-                      [id, pageid, current_user.id])
+    fields = get_api_fields('id, title, body, itemtype_id, displayorder')
+    sql = get_select_single_query(fields, 'items')
+    item = get_record(sql, [current_user.id, id])
 
     if item is None:
         return ApiResponse(message='Not Found', status_code=404)
@@ -252,8 +303,9 @@ def delete_item(pageid, id):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['GET'])
 @login_required
 def read_listitems(pageid, itemid):
-    listitems = get_records('SELECT ' + get_api_fields('id, body, displayorder') + ' FROM listitems WHERE deleted = False AND item_id = %s AND user_id = %s ORDER BY displayorder, created_at',
-                            [itemid, current_user.id])
+    fields = get_api_fields('id, body, displayorder')
+    sql = get_select_multiple_query(fields, 'listitems', 'item_id')
+    listitems = get_records(sql, [current_user.id, itemid])
 
     return ApiResponse(listitems)
 
@@ -272,8 +324,9 @@ def create_listitem(pageid, itemid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
 @login_required
 def read_listitem(pageid, itemid, id):
-    listitem = get_record('SELECT ' + get_api_fields('id, body, displayorder') + ' FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s',
-                          [id, itemid, current_user.id])
+    fields = get_api_fields('id, body, displayorder')
+    sql = get_select_single_query(fields, 'listitems')
+    listitem = get_record(sql, [current_user.id, id])
 
     if listitem is None:
         return ApiResponse(message='Not Found', status_code=404)
