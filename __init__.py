@@ -182,12 +182,16 @@ def get_update_query(fields, table):
 
 def get_delete_query(table):
     sql = """
-          DELETE FROM
+          UPDATE
               {0}
+          SET
+              deleted = True
           WHERE
               user_id = %s 
           AND
               id = %s
+          RETURNING
+              id
           """
     return sql.format(table)
 
@@ -272,8 +276,8 @@ def update_page(id):
 @app.route('/api/v1/pages/<int:id>', methods=['DELETE'])
 @login_required
 def delete_page(id):
-    pageid = execute_and_return_id('DELETE FROM pages WHERE id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [id, current_user.id])
+    sql = get_delete_query('pages')
+    pageid = execute_and_return_id(sql, [current_user.id, id])
     
     return ApiResponse({ 'id': pageid })
 
@@ -333,8 +337,8 @@ def update_item(pageid, id):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['DELETE'])
 @login_required
 def delete_item(pageid, id):
-    itemid = execute_and_return_id('DELETE FROM items WHERE id = %s AND page_id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [id, pageid, current_user.id])
+    sql = get_delete_query('items')
+    itemid = execute_and_return_id(sql, [current_user.id, id])
     
     return ApiResponse({ 'id': itemid })
 
@@ -391,8 +395,8 @@ def update_listitem(pageid, itemid, id):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['DELETE'])
 @login_required
 def delete_listitem(pageid, itemid, id):
-    itemid = execute_and_return_id('DELETE FROM listitems WHERE id = %s AND item_id = %s AND deleted = False AND user_id = %s RETURNING id',
-                                   [id, itemid, current_user.id])
+    sql = get_delete_query('listitems')
+    itemid = execute_and_return_id(sql, [current_user.id, id])
     
     return ApiResponse({ 'id': itemid })
 
