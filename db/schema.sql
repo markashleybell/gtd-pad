@@ -114,6 +114,8 @@ INSERT INTO users
 VALUES
     (1, 'me@markashleybell.com', '$6$rounds=100000$WFAb1fBhbTt5G9hF$uWKzu5Y2mwIG4myHU9fBp3uKcYOHebWJNtNEbtUV7aDpB6AYcZ3cXnSBT8S9N5X5qL/5SgFk2MFRUhEE6s.1q/');
 
+ALTER SEQUENCE users_id_seq RESTART WITH 2;
+
 
 -- Insert item types
 INSERT INTO itemtypes
@@ -122,12 +124,16 @@ VALUES
     (1, 'List'),
     (2, 'Note');
 
+ALTER SEQUENCE itemtypes_id_seq RESTART WITH 3;
+
 
 -- Insert test page
 INSERT INTO pages
     (id, title, displayorder, user_id)
 VALUES
     (1, 'Test Page', 0, 1);
+
+ALTER SEQUENCE pages_id_seq RESTART WITH 2;
 
 
 -- Insert test items
@@ -137,6 +143,8 @@ VALUES
     (1, 'Test List', 'This is a test list.', 1, 1, 0, 1),
     (2, 'Test Note', 'This is a test note.', 2, 1, 1, 1);
 
+ALTER SEQUENCE items_id_seq RESTART WITH 3;
+
 
 -- Insert test list items
 INSERT INTO listitems
@@ -145,3 +153,5 @@ VALUES
     (1, 'Test List Item 1', 1, 0, 1),
     (2, 'Test List Item 2', 1, 1, 1),
     (3, 'Test List Item 3', 1, 2, 1);
+
+ALTER SEQUENCE listitems_id_seq RESTART WITH 4;
