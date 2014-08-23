@@ -249,7 +249,7 @@ def read_page(id):
     # If children have been requested
     if request.args.get('children') == 'true':
         # Get all the items for the page
-        fields = get_api_fields('id, title, body, itemtype_id, displayorder')
+        fields = get_api_fields('id, title, body, page_id, itemtype_id, displayorder')
         sql = get_select_multiple_query(fields, 'items', 'page_id')
         page['items'] = get_records(sql, [current_user.id, id])
         # Get all the list items for any lists
@@ -311,7 +311,7 @@ def create_item(pageid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
 @login_required
 def read_item(pageid, id):
-    fields = get_api_fields('id, title, body, itemtype_id, displayorder')
+    fields = get_api_fields('id, title, body, page_id, itemtype_id, displayorder')
     sql = get_select_single_query(fields, 'items')
     item = get_record(sql, [current_user.id, id])
 

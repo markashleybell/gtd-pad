@@ -28,3 +28,16 @@
 #results {
     padding-bottom: 60px;
 }
+
+.controls {
+    a {
+        padding: 0 6px 0 6px;
+        border-right: solid 1px #e0e0e0;
+        &:first-child {
+            padding-left: 0;
+        }
+        &:last-child {
+            border: none;
+        }
+    }
+}

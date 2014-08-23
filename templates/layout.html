@@ -64,14 +64,18 @@
         <script id="page-template" type="text/x-handlebars-template">
             <div id="page-{{id}}">
                 <div class="controls page">
-                    <a href="#" class="edit" data-pageid="{{id}}">Edit</a> 
-                    <a href="#" class="delete" data-pageid="{{id}}">Delete</a>
+                    <a href="#" class="edit" data-pageid="{{id}}">Edit</a><!-- 
+                 --><a href="#" class="addnote" data-pageid="{{id}}">Add Note</a><!--
+                 --><a href="#" class="addlist" data-pageid="{{id}}">Add List</a><!--
+                 --><a href="#" class="delete" data-pageid="{{id}}">Delete</a>
                 </div>
                 <div class="content">
                     <h1>{{title}}</h1>
-                    {{#each items}}
-                        {{> item}}
-                    {{/each}}
+                    <div class="items">
+                        {{#each items}}
+                            {{> item}}
+                        {{/each}}
+                    </div>
                 </div>
             </div>
         </script>
@@ -87,9 +91,9 @@
         </script>
         <script id="item-template" type="text/x-handlebars-template">
             <div id="item-{{id}}">
-                <div class="controls">
-                    <a href="#" class="edit">Edit</a> 
-                    <a href="#" class="delete">Delete</a>
+                <div class="controls item">
+                    <a href="#" class="edit" data-pageid="{{page_id}}" data-itemid="{{id}}">Edit</a><!--
+                 --><a href="#" class="delete" data-pageid="{{page_id}}" data-itemid="{{id}}">Delete</a>
                 </div>
                 <div class="content">
                     <h2>{{title}}</h2>
@@ -106,11 +110,27 @@
                 </div>
             </div>
         </script>
+        <script id="item-form-template" type="text/x-handlebars-template">
+            <form class="form-item" role="form" action="" data-itemid="{{id}}" data-pageid="{{page_id}}">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input class="form-control" type="text" id="title" name="title" value="{{title}}" placeholder="Item Title" /> 
+                </div>
+                <div class="form-group">
+                    <label for="body">Body</label>
+                    <textarea class="form-control" id="body" name="body" placeholder="Item Body">{{body}}</textarea> 
+                    <input type="hidden" id="displayorder" name="displayorder" value="{{displayorder}}" />
+                    <input type="hidden" id="itemtype_id" name="itemtype_id" value="{{itemtype_id}}" /> 
+                    <input type="hidden" id="page_id" name="page_id" value="{{page_id}}" /> 
+                </div>
+                <input class="btn btn-primary" type="submit" value="Save" />
+            </form>
+        </script>
         <script id="listitem-template" type="text/x-handlebars-template">
             <li id="listitem-{{id}}">
                 <div class="controls">
-                    <a href="#" class="edit">Edit</a> 
-                    <a href="#" class="delete">Delete</a>
+                    <a href="#" class="edit">Edit</a><!--
+                 --><a href="#" class="delete">Delete</a>
                 </div>
                 <div class="content">
                     {{body}}

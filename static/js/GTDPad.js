@@ -12,12 +12,14 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         _templates = {
             pagesMenu: null,
             page: null,
+            item: null,
+            listItem: null,
             pageForm: null,
             itemForm: null,
             listItemForm: null
         };
 
-    _serializeObject = function($form) {
+    var _serializeObject = function($form) {
         var o = {};
         var a = $form.serializeArray();
         $.each(a, function() {
@@ -106,7 +108,10 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         // Compile Handlebars templates
         _templates.pagesMenu = Handlebars.compile($('#pages-menu-template').html());
         _templates.page = Handlebars.compile($('#page-template').html());
+        _templates.item = Handlebars.compile($('#item-template').html());
+        _templates.listItem = Handlebars.compile($('#listitem-template').html());
         _templates.pageForm = Handlebars.compile($('#page-form-template').html());
+        _templates.itemForm = Handlebars.compile($('#item-form-template').html());
         // Handle page menu item click
         _ui.pagesMenu.on('click', 'li > a', function(e) {
             e.preventDefault();
@@ -140,16 +145,18 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
                 _loadPagesMenu();
                 form.prev('.controls').show();
                 form.remove();
-                $('#page-' + id + ' > .content > h1').html(pageData.title);
+                $('#page-' + id + ' > .content > h1').html(pageData.title).show();
             });
         });
         // Handle page edit link click
         _ui.pageContainer.on('click', 'div.controls.page > a.edit', function(e) {
             e.preventDefault();
             var a = $(this);
+            var id = a.data('pageid');
             var controls = a.parent();
-            _ajaxGet('/pages/' + a.data('pageid'), null, function(data, status, request) { 
+            _ajaxGet('/pages/' + id, null, function(data, status, request) { 
                 controls.after(_templates.pageForm(data.payload)).hide();
+                $('#page-' + id + ' > .content > h1').hide();
             });
         });
         // Handle page delete link click
@@ -158,6 +165,65 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var a = $(this);
             _ajaxDelete('/pages/' + a.data('pageid'), null, function(data, status, request) { 
                 window.location = '/';
+            });
+        });
+        // Handle page add note/list link click
+        _ui.pageContainer.on('click', 'div.controls.page > a.addnote, div.controls.page > a.addlist', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var pageid = a.data('pageid');
+            var controls = a.parent();
+            // alert(id + ' List:' + a.hasClass('addlist'));
+            controls.after(_templates.itemForm({
+                id: 0,
+                page_id: pageid,
+                title: '',
+                body: '',
+                displayorder: -1,
+                itemtype_id: (a.hasClass('addlist')) ? 1 : 2
+            }));
+        });
+        // Handle item edit link click
+        _ui.pageContainer.on('click', 'div.controls.item > a.edit', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var id = a.data('itemid');
+            var pageid = a.data('pageid');
+            var controls = a.parent();
+            _ajaxGet('/pages/' + pageid + '/items/' + id, null, function(data, status, request) { 
+                controls.after(_templates.itemForm(data.payload)).hide();
+                $('#item-' + id + ' > .content').hide();
+            });
+        });
+        // Handle item edit form submit
+        _ui.pageContainer.on('submit', 'form.form-item', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var id = parseInt(form.data('itemid'), 10);
+            var pageid = form.data('pageid');
+            var itemData = _serializeObject(form);
+            if(id === 0) { // New item
+                _ajaxPost('/pages/' + pageid + '/items', itemData, function(data, status, request) { 
+                    form.prev('.controls').show();
+                    form.remove();
+                    itemData.id = data.payload.id;
+                    $('#page-' + pageid + ' > .content > .items').prepend(_templates.item(itemData));
+                });
+            } else { // Update item
+                _ajaxPut('/pages/' + pageid + '/items/' + id, itemData, function(data, status, request) { 
+                    form.prev('.controls').show();
+                    form.remove();
+                    $('#item-' + id).replaceWith(_templates.item(itemData));
+                });
+            }
+        });
+        // Handle item delete link click
+        _ui.pageContainer.on('click', 'div.controls.item > a.delete', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var id = parseInt(a.data('itemid'), 10);
+            _ajaxDelete('/pages/' + a.data('pageid') + '/items/' + id, null, function(data, status, request) { 
+                $('#item-' + id).remove();
             });
         });
         // Initially load the pages menu
