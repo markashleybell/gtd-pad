@@ -254,7 +254,7 @@ def read_page(id):
         page['items'] = get_records(sql, [current_user.id, id])
         # Get all the list items for any lists
         for item in page['items']:
-            fields = get_api_fields('id, body, displayorder')
+            fields = get_api_fields('id, body, displayorder, item_id, {0} AS page_id'.format(id))
             sql = get_select_multiple_query(fields, 'listitems', 'item_id')
             if item['itemtype_id'] == 1:
                 item['listitems'] = get_records(sql, [current_user.id, item['id']])
@@ -370,7 +370,7 @@ def create_listitem(pageid, itemid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
 @login_required
 def read_listitem(pageid, itemid, id):
-    fields = get_api_fields('id, body, displayorder')
+    fields = get_api_fields('id, body, displayorder, item_id, {0} AS page_id'.format(pageid))
     sql = get_select_single_query(fields, 'listitems')
     listitem = get_record(sql, [current_user.id, id])
 

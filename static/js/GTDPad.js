@@ -97,7 +97,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
     var _init = function(id) {
         // Register Handlebars helper to determine whether an item is a list
         Handlebars.registerHelper('islist', function(options) {
-            return (this.itemtype_id === 1) ? options.fn(this) : options.inverse(this)
+            return (this.itemtype_id == 1) ? options.fn(this) : options.inverse(this)
         });
         // Register partial views
         Handlebars.registerPartial('item', $('#item-template').html());
@@ -250,6 +250,47 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var a = $(this);
             a.parent().prev('.controls').show();
             a.closest('form').remove();
+        });
+        // Handle list item edit link click
+        _ui.pageContainer.on('click', 'div.controls.listitem > a.edit', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var id = a.data('listitemid');
+            var itemid = a.data('itemid');
+            var pageid = a.data('pageid');
+            var controls = a.parent();
+            _ajaxGet('/pages/' + pageid + '/items/' + itemid + '/listitems/' + id, null, function(data, status, request) { 
+                controls.after(_templates.listItemForm(data.payload)).hide();
+                $('#listitem-' + id + ' > .content').hide();
+            });
+        });
+        // Handle list item edit form submit
+        _ui.pageContainer.on('submit', 'form.form-listitem', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var id = parseInt(form.data('listitemid'), 10);
+            var itemid = parseInt(form.data('itemid'), 10);
+            var pageid = parseInt(form.data('pageid'), 10);
+            var itemData = _serializeObject(form);
+            if(id === 0) { // New item
+                _ajaxPost('/pages/' + pageid + '/items/' + itemid + '/listitems', itemData, function(data, status, request) { 
+                    form.prev('.controls').show();
+                    form.remove();
+                    itemData.id = data.payload.id;
+                    itemData.item_id = itemid;
+                    itemData.page_id = pageid;
+                    $('#item-' + itemid + ' div.content > ul').append(_templates.listItem(itemData));
+                });
+            } else { // Update item
+                _ajaxPut('/pages/' + pageid + '/items/' + itemid + '/listitems/' + id, itemData, function(data, status, request) { 
+                    form.prev('.controls').show();
+                    form.remove();
+                    itemData.id = id;
+                    itemData.item_id = itemid;
+                    itemData.page_id = pageid;
+                    $('#listitem-' + id).replaceWith(_templates.listItem(itemData));
+                });
+            }
         });
         // Initially load the pages menu
         _loadPagesMenu(function() {
