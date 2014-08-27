@@ -231,7 +231,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             // Get the initial title from the page link to avoid an additional request
             var title = _ui.pagesMenu.find('a[data-pageid=' + id + ']').text();
             // Add the initial page to the history state
-            History.pushState({ id: id, title: title }, title, '/'); 
+            History.pushState({ id: id, title: title }, title, '/' + id); 
             // Load the page
             _loadPage(id, function() {
                 // Bind to History.js state change event, but only once the first page has 
