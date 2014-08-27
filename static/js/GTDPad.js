@@ -112,6 +112,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         _templates.listItem = Handlebars.compile($('#listitem-template').html());
         _templates.pageForm = Handlebars.compile($('#page-form-template').html());
         _templates.itemForm = Handlebars.compile($('#item-form-template').html());
+        _templates.listItemForm = Handlebars.compile($('#listitem-form-template').html());
         // Handle page menu item click
         _ui.pagesMenu.on('click', 'li > a', function(e) {
             e.preventDefault();
@@ -225,6 +226,30 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             _ajaxDelete('/pages/' + a.data('pageid') + '/items/' + id, null, function(data, status, request) { 
                 $('#item-' + id).remove();
             });
+        });
+        // Handle list item add link click
+        _ui.pageContainer.on('click', 'div.controls.listitem > a.addlistitem', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var pageid = parseInt(a.data('pageid'), 10);
+            var itemid = parseInt(a.data('itemid'), 10);
+            var controls = a.parent();
+            // alert(id + ' List:' + a.hasClass('addlist'));
+            controls.after(_templates.listItemForm({
+                id: 0,
+                page_id: pageid,
+                item_id: itemid,
+                body: '',
+                displayorder: -1
+            }));
+            controls.hide();
+        });
+        // Handle list item add link click
+        _ui.pageContainer.on('click', 'form a.cancel', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            a.parent().prev('.controls').show();
+            a.closest('form').remove();
         });
         // Initially load the pages menu
         _loadPagesMenu(function() {

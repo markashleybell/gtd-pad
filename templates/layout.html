@@ -106,6 +106,9 @@
                             {{> listitem}}
                         {{/each}}
                         </ul>
+                        <div class="controls listitem">
+                            <a href="#" class="addlistitem" data-pageid="{{page_id}}" data-itemid="{{id}}">Add List Item</a>
+                        </div>
                     {{/islist}}
                 </div>
             </div>
@@ -136,6 +139,19 @@
                     {{body}}
                 </div>
             </li>
+        </script>
+        <script id="listitem-form-template" type="text/x-handlebars-template">
+            <form class="form-listitem" role="form" action="" data-itemid="{{id}}" data-pageid="{{page_id}}">
+                <div class="form-group">
+                    <label for="body" class="sr-only">Body</label>
+                    <textarea class="form-control" id="body" name="body" placeholder="Item Body">{{body}}</textarea> 
+                    <input type="hidden" id="displayorder" name="displayorder" value="{{displayorder}}" />
+                    <input type="hidden" id="itemtype_id" name="itemtype_id" value="{{itemtype_id}}" /> 
+                    <input type="hidden" id="page_id" name="page_id" value="{{page_id}}" /> 
+                </div>
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a href="#" class="btn cancel">Cancel</a>
+            </form>
         </script>
         {% endraw %}
     </body>
