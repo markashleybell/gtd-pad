@@ -18,8 +18,9 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             itemForm: null,
             listItemForm: null
         };
-
-    var _serializeObject = function($form) {
+    // Given an HTML form, build an object literal with a 
+    // property for each form field set to that field's value
+    var _serializeToObjectLiteral = function($form) {
         var o = {};
         var a = $form.serializeArray();
         $.each(a, function() {
@@ -34,58 +35,60 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         });
         return o;
     };
-
+    // Default error callback to be called in the event of an AJAX error
     var _defaultAjaxErrorCallback = function (request, status, error) {
         alert('Http Error: ' + status + ' - ' + error);
     };
-
+    // Base function 
     var _ajaxRequest = function (type, url, data, successCallback, errorCallback) {
         // If no error callback is explicitly supplied, pass in the default error callback
         if (errorCallback === null || typeof errorCallback !== 'function') {
             errorCallback = _defaultAjaxErrorCallback;
         }
-
+        // Set up the AJAX request
         var options = {
             url: _apiBaseUrl + url,
+            contentType: 'application/json; charset=utf-8',
+            // Turn the data (if present) into a JSON string, as all our requests
+            // are being sent as JSON (see contentType above)
             data: (data === null) ? null : JSON.stringify(data),
-            dataType: 'json',
-            type: type,
-            contentType: 'application/json; charset=utf-8'
+            // Expect the response to be JSON as well
+            dataType: 'json', 
+            type: type
         };
-
+        // Perform the request
         $.ajax(options).done(successCallback).fail(errorCallback);
     };
-
+    // Perform a GET request
     var _ajaxGet = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('GET', url, data, successCallback, errorCallback);
     };
-
+    // Perform a POST request
     var _ajaxPost = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('POST', url, data, successCallback, errorCallback);
     };
-
+    // Perform a PUT request
     var _ajaxPut = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('PUT', url, data, successCallback, errorCallback);
     };
-
+    // Perform a DELETE request
     var _ajaxDelete = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('DELETE', url, data, successCallback, errorCallback);
     };
-
+    // Load all the data for this page, including child items and grandchild listitems
     var _loadPage = function(id, callback) {
-        _pageId = id;
-        // Load all the data for this page, including child items and grandchild listitems
-        _ajaxGet('/pages/' + _pageId + '?children=true', null, function(data, status, request) { 
+        _ajaxGet('/pages/' + id + '?children=true', null, function(data, status, request) { 
             var page = data.payload;
+            // Set global _pageId to the ID of the page we've just loaded
+            _pageId = id;
             _ui.pageContainer.html(_templates.page(page));
             if(typeof callback === 'function') {
                 callback();
             }
         });
     };
-
+    // Load the list of all pages and populate the sidebar menu
     var _loadPagesMenu = function(callback) {
-        // Load the list of all pages and populate the sidebar menu
         _ajaxGet('/pages', null, function(data, status, request) { 
             _ui.pagesMenu.html(_templates.pagesMenu(data));
             if(typeof callback === 'function') {
@@ -93,9 +96,9 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             }
         });
     };
-
+    // Set up the application
     var _init = function(id) {
-        // Register Handlebars helper to determine whether an item is a list
+        // Register a Handlebars helper to determine whether an item is a list
         Handlebars.registerHelper('islist', function(options) {
             return (this.itemtype_id == 1) ? options.fn(this) : options.inverse(this)
         });
@@ -132,7 +135,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
         _ui.pagesMenu.on('submit', 'form.form-page', function(e) {
             e.preventDefault();
             var form = $(this);
-            _ajaxPost('/pages', _serializeObject(form), function(data, status, request) { 
+            _ajaxPost('/pages', _serializeToObjectLiteral(form), function(data, status, request) { 
                 _loadPagesMenu();
             });
         });
@@ -141,7 +144,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             e.preventDefault();
             var form = $(this);
             var id = form.data('pageid');
-            var pageData = _serializeObject(form);
+            var pageData = _serializeToObjectLiteral(form);
             _ajaxPut('/pages/' + id, pageData, function(data, status, request) { 
                 _loadPagesMenu();
                 form.prev('.controls').show();
@@ -202,7 +205,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var form = $(this);
             var id = parseInt(form.data('itemid'), 10);
             var pageid = form.data('pageid');
-            var itemData = _serializeObject(form);
+            var itemData = _serializeToObjectLiteral(form);
             if(id === 0) { // New item
                 _ajaxPost('/pages/' + pageid + '/items', itemData, function(data, status, request) { 
                     form.prev('.controls').show();
@@ -244,11 +247,12 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             }));
             controls.hide();
         });
-        // Handle list item add link click
+        // Handle list item cancel edit link click
         _ui.pageContainer.on('click', 'form a.cancel', function(e) {
             e.preventDefault();
             var a = $(this);
             a.parent().prev('.controls').show();
+            a.parent().next('.content').show();
             a.closest('form').remove();
         });
         // Handle list item edit link click
@@ -271,7 +275,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             var id = parseInt(form.data('listitemid'), 10);
             var itemid = parseInt(form.data('itemid'), 10);
             var pageid = parseInt(form.data('pageid'), 10);
-            var itemData = _serializeObject(form);
+            var itemData = _serializeToObjectLiteral(form);
             if(id === 0) { // New item
                 _ajaxPost('/pages/' + pageid + '/items/' + itemid + '/listitems', itemData, function(data, status, request) { 
                     form.prev('.controls').show();
@@ -292,6 +296,15 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
                 });
             }
         });
+        // Handle list item delete link click
+        _ui.pageContainer.on('click', 'div.controls.listitem > a.delete', function(e) {
+            e.preventDefault();
+            var a = $(this);
+            var id = parseInt(a.data('listitemid'), 10);
+            _ajaxDelete('/pages/' + a.data('pageid') + '/items/' + a.data('pageid') + '/listitems/' + id, null, function(data, status, request) { 
+                $('#listitem-' + id).remove();
+            });
+        });
         // Initially load the pages menu
         _loadPagesMenu(function() {
             // Get the initial title from the page link to avoid an additional request
@@ -311,7 +324,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             });
         });
     };
-
+    // Public methods
     return {
         init: _init
     };
