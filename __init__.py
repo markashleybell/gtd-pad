@@ -391,11 +391,10 @@ def read_listitem(pageid, itemid, id):
 @login_required
 def update_listitem(pageid, itemid, id):
     body = request.json["body"]
-    completed = request.json["completed"]
     item_id = request.json["item_id"]
     displayorder = request.json["displayorder"]
-    sql = get_update_query(['body', 'completed', 'item_id', 'displayorder'], 'listitems')
-    itemid = execute_and_return_id(sql, [body, completed, item_id, displayorder, current_user.id, id])
+    sql = get_update_query(['body', 'item_id', 'displayorder'], 'listitems')
+    itemid = execute_and_return_id(sql, [body, item_id, displayorder, current_user.id, id])
 
     return ApiResponse({ 'id': itemid })
 
