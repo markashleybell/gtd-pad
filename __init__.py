@@ -122,7 +122,7 @@ def get_select_single_query(fields, table):
     return sql.format(fields, table)
 
 
-def get_select_multiple_query(fields, table, filter=None):
+def get_select_multiple_query(fields, table, filter=None, order='displayorder, created_at'):
     sql = """
           SELECT 
               {0}
@@ -139,15 +139,15 @@ def get_select_multiple_query(fields, table, filter=None):
                AND 
                    {2} = %s
                ORDER BY 
-                   displayorder, created_at
+                   {3}
                """
-        return sql.format(fields, table, filter)
+        return sql.format(fields, table, filter, order)
     else:
         sql += """
                ORDER BY 
-                   displayorder, created_at
+                   {2}
                """
-        return sql.format(fields, table)
+        return sql.format(fields, table, order)
 
 
 def get_insert_query(fields, table):
@@ -254,8 +254,8 @@ def read_page(id):
         page['items'] = get_records(sql, [current_user.id, id])
         # Get all the list items for any lists
         for item in page['items']:
-            fields = get_api_fields('id, body, displayorder, item_id, {0} AS page_id'.format(id))
-            sql = get_select_multiple_query(fields, 'listitems', 'item_id')
+            fields = get_api_fields('id, body, completed, displayorder, item_id, {0} AS page_id'.format(id))
+            sql = get_select_multiple_query(fields, 'listitems', 'item_id', 'completed, displayorder, created_at')
             if item['itemtype_id'] == 1:
                 item['listitems'] = get_records(sql, [current_user.id, item['id']])
 
@@ -318,6 +318,13 @@ def read_item(pageid, id):
     if item is None:
         return ApiResponse(message='Not Found', status_code=404)
 
+    # TODO: Optimise data retrieval, one query per hierarchical level
+    # If children have been requested
+    if request.args.get('children') == 'true' and item['itemtype_id'] == 1:
+        fields = get_api_fields('id, body, completed, displayorder, item_id, {0} AS page_id'.format(id))
+        sql = get_select_multiple_query(fields, 'listitems', 'item_id', 'completed, displayorder, created_at')
+        item['listitems'] = get_records(sql, [current_user.id, item['id']])
+
     return ApiResponse(item)
 
 
@@ -349,7 +356,7 @@ def delete_item(pageid, id):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['GET'])
 @login_required
 def read_listitems(pageid, itemid):
-    fields = get_api_fields('id, body, displayorder')
+    fields = get_api_fields('id, body, completed, displayorder')
     sql = get_select_multiple_query(fields, 'listitems', 'item_id')
     listitems = get_records(sql, [current_user.id, itemid])
 
@@ -370,7 +377,7 @@ def create_listitem(pageid, itemid):
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
 @login_required
 def read_listitem(pageid, itemid, id):
-    fields = get_api_fields('id, body, displayorder, item_id, {0} AS page_id'.format(pageid))
+    fields = get_api_fields('id, body, completed, displayorder, item_id, {0} AS page_id'.format(pageid))
     sql = get_select_single_query(fields, 'listitems')
     listitem = get_record(sql, [current_user.id, id])
 
@@ -384,10 +391,26 @@ def read_listitem(pageid, itemid, id):
 @login_required
 def update_listitem(pageid, itemid, id):
     body = request.json["body"]
+    completed = request.json["completed"]
     item_id = request.json["item_id"]
     displayorder = request.json["displayorder"]
-    sql = get_update_query(['body', 'item_id', 'displayorder'], 'listitems')
-    itemid = execute_and_return_id(sql, [body, item_id, displayorder, current_user.id, id])
+    sql = get_update_query(['body', 'completed', 'item_id', 'displayorder'], 'listitems')
+    itemid = execute_and_return_id(sql, [body, completed, item_id, displayorder, current_user.id, id])
+
+    return ApiResponse({ 'id': itemid })
+
+
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['PATCH'])
+@login_required
+def update_listitem_partial(pageid, itemid, id):
+    # Dynamically get the columns to update from the keys 
+    # present in the request.json dictionary
+    columns = [k for k in request.json]
+    # Same for the updated data
+    data = [request.json[k] for k in request.json]
+    # Only update the columns we were passed data for
+    sql = get_update_query(columns, 'listitems')
+    itemid = execute_and_return_id(sql, data + [current_user.id, id])
 
     return ApiResponse({ 'id': itemid })
 

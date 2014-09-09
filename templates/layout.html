@@ -136,6 +136,11 @@
                  --><a href="#" class="delete" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Delete</a>
                 </div>
                 <div class="content">
+                    {{#if completed}}
+                    <input type="checkbox" class="listitem-complete" name="completed" value="true" checked="checked"  data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}" />
+                    {{else}}
+                    <input type="checkbox" class="listitem-complete" name="completed" value="true" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}" />
+                    {{/if}}
                     {{body}}
                 </div>
             </li>

@@ -71,6 +71,10 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
     var _ajaxPut = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('PUT', url, data, successCallback, errorCallback);
     };
+    // Perform a PATCH request
+    var _ajaxPatch = function (url, data, successCallback, errorCallback) {
+        _ajaxRequest('PATCH', url, data, successCallback, errorCallback);
+    };
     // Perform a DELETE request
     var _ajaxDelete = function (url, data, successCallback, errorCallback) {
         _ajaxRequest('DELETE', url, data, successCallback, errorCallback);
@@ -295,6 +299,19 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
                     $('#listitem-' + id).replaceWith(_templates.listItem(itemData));
                 });
             }
+        });
+        // Handle list item checkbox click
+        _ui.pageContainer.on('click', 'input.listitem-complete', function(e) {
+            var checkbox = $(this);
+            var id = parseInt(checkbox.data('listitemid'), 10);
+            var itemid = parseInt(checkbox.data('itemid'), 10);
+            var pageid = parseInt(checkbox.data('pageid'), 10);
+            var itemData = { completed: checkbox[0].checked };
+            _ajaxPatch('/pages/' + pageid + '/items/' + itemid + '/listitems/' + id, itemData, function(data, status, request) { 
+                _ajaxGet('/pages/' + pageid + '/items/' + itemid + '?children=true', null, function(data, status, request) { 
+                    $('#item-' + itemid).replaceWith(_templates.item(data.payload));
+                });
+            });
         });
         // Handle list item delete link click
         _ui.pageContainer.on('click', 'div.controls.listitem > a.delete', function(e) {
