@@ -95,6 +95,23 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
     var _loadPagesMenu = function(callback) {
         _ajaxGet('/pages', null, function(data, status, request) { 
             _ui.pagesMenu.html(_templates.pagesMenu(data));
+            // Set up page sorting
+            _ui.pagesMenu.find('div.content > ul').sortable({
+                stop: function(e, ui) {
+                    // Create an array of object literals containing ID and 
+                    // displayorder from the <li> elements
+                    var order = _ui.pagesMenu.find('div.content > ul > li').map(function(i, item) { 
+                        return { 
+                            id: $(item).find('> a').data('pageid'),
+                            displayorder: i
+                        };
+                    }).get();
+                    _ajaxPut('/pages', order, function(data, status, request) { 
+                        // We don't need to do anything here
+                    });
+                },
+                handle: '.drag'
+            });
             if(typeof callback === 'function') {
                 callback();
             }

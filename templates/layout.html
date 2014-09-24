@@ -44,6 +44,7 @@
             {% block body %}{% endblock %}
         </div> <!-- /container -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/handlebars-v1.3.0.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.history.js') }}"></script>
@@ -56,7 +57,7 @@
             <div class="content">
                 <ul>
                     {{#each payload}}
-                    <li><a data-pageid="{{id}}" href="/{{id}}">{{title}}</a></li>
+                    <li><a data-pageid="{{id}}" href="/{{id}}">{{title}}</a> <a href="#" class="drag">Drag</a></li>
                     {{/each}}
                 </ul>
             </div>
@@ -93,7 +94,8 @@
             <div id="item-{{id}}">
                 <div class="controls item">
                     <a href="#" class="edit" data-pageid="{{page_id}}" data-itemid="{{id}}">Edit</a><!--
-                 --><a href="#" class="delete" data-pageid="{{page_id}}" data-itemid="{{id}}">Delete</a>
+                 --><a href="#" class="delete" data-pageid="{{page_id}}" data-itemid="{{id}}">Delete</a><!--
+                 --><a href="#" class="drag" data-pageid="{{page_id}}" data-itemid="{{id}}">Drag</a>
                 </div>
                 <div class="content">
                     <h2>{{title}}</h2>
@@ -133,7 +135,8 @@
             <li id="listitem-{{id}}">
                 <div class="controls listitem">
                     <a href="#" class="edit" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Edit</a><!--
-                 --><a href="#" class="delete" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Delete</a>
+                 --><a href="#" class="delete" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Delete</a><!--
+                 --><a href="#" class="drag" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Drag</a>
                 </div>
                 <div class="content">
                     {{#if completed}}

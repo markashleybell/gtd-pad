@@ -235,6 +235,17 @@ def create_page():
     return ApiResponse({ 'id': pageid })
 
 
+@app.route('/api/v1/pages', methods=['PUT'])
+@login_required
+def reorder_pages():
+    pages = request.json
+    sql = get_update_query(['displayorder'], 'pages')
+    for page in pages:
+        pageid = execute_and_return_id(sql, [page['displayorder'], current_user.id, page['id']])
+
+    return ApiResponse(pages)
+
+
 @app.route('/api/v1/pages/<int:id>', methods=['GET'])
 @login_required
 def read_page(id):
