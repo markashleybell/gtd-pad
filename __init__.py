@@ -396,6 +396,18 @@ def create_listitem(pageid, itemid):
     return ApiResponse({ 'id': listitemid })
 
 
+@app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems', methods=['PUT'])
+@login_required
+def reorder_listitems(pageid, itemid):
+    listitems = request.json
+    sql = get_update_query(['displayorder'], 'listitems')
+    print sql
+    for listitem in listitems:
+        listitemid = execute_and_return_id(sql, [listitem['displayorder'], current_user.id, listitem['id']])
+
+    return ApiResponse(listitems)
+
+
 @app.route('/api/v1/pages/<int:pageid>/items/<int:itemid>/listitems/<int:id>', methods=['GET'])
 @login_required
 def read_listitem(pageid, itemid, id):

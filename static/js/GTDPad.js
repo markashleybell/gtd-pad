@@ -90,7 +90,7 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             _ui.pageContainer.find('div.items').sortable({
                 stop: function(e, ui) {
                     // Create an array of object literals containing ID and 
-                    // displayorder from the <li> elements
+                    // displayorder from the <div> elements
                     var order = _ui.pageContainer.find('div.items > div').map(function(i, item) { 
                         return { 
                             id: $(item).data('itemid'),
@@ -102,6 +102,23 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
                     });
                 },
                 handle: '.drag'
+            });
+            _ui.pageContainer.find('div.content ul').sortable({
+                stop: function(e, ui) {
+                    var el = $(this);
+                    // Create an array of object literals containing ID and 
+                    // displayorder from the <div> elements
+                    var order = el.find('li').map(function(i, item) { 
+                        return { 
+                            id: $(item).data('listitemid'),
+                            displayorder: i
+                        };
+                    }).get();
+                    _ajaxPut('/pages/' + id + '/items/' + order[0].id + '/listitems', order, function(data, status, request) { 
+                        // We don't need to do anything here
+                    });
+                },
+                handle: '.drag-item'
             });
             if(typeof callback === 'function') {
                 callback();

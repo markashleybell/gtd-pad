@@ -132,11 +132,11 @@
             </form>
         </script>
         <script id="listitem-template" type="text/x-handlebars-template">
-            <li id="listitem-{{id}}">
+            <li id="listitem-{{id}}" data-listitemid="{{id}}">
                 <div class="controls listitem">
                     <a href="#" class="edit" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Edit</a><!--
                  --><a href="#" class="delete" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Delete</a><!--
-                 --><a href="#" class="drag" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Drag</a>
+                 --><a href="#" class="drag-item" data-listitemid="{{id}}" data-pageid="{{page_id}}" data-itemid="{{item_id}}">Drag</a>
                 </div>
                 <div class="content">
                     {{#if completed}}
