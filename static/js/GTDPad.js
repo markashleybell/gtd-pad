@@ -86,6 +86,23 @@ var GTDPad = (function($, window, undefined, History, Handlebars) {
             // Set global _pageId to the ID of the page we've just loaded
             _pageId = id;
             _ui.pageContainer.html(_templates.page(page));
+            // Set up item sorting
+            _ui.pageContainer.find('div.items').sortable({
+                stop: function(e, ui) {
+                    // Create an array of object literals containing ID and 
+                    // displayorder from the <li> elements
+                    var order = _ui.pageContainer.find('div.items > div').map(function(i, item) { 
+                        return { 
+                            id: $(item).data('itemid'),
+                            displayorder: i
+                        };
+                    }).get();
+                    _ajaxPut('/pages/' + id + '/items', order, function(data, status, request) { 
+                        // We don't need to do anything here
+                    });
+                },
+                handle: '.drag'
+            });
             if(typeof callback === 'function') {
                 callback();
             }

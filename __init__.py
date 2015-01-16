@@ -319,6 +319,17 @@ def create_item(pageid):
     return ApiResponse({ 'id': itemid })
 
 
+@app.route('/api/v1/pages/<int:pageid>/items', methods=['PUT'])
+@login_required
+def reorder_items(pageid):
+    items = request.json
+    sql = get_update_query(['displayorder'], 'items')
+    for item in items:
+        itemid = execute_and_return_id(sql, [item['displayorder'], current_user.id, item['id']])
+
+    return ApiResponse(items)
+
+
 @app.route('/api/v1/pages/<int:pageid>/items/<int:id>', methods=['GET'])
 @login_required
 def read_item(pageid, id):
