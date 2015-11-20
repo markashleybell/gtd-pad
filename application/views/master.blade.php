@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>GTD-Pad</title>
         <link rel="stylesheet" type="text/css" href="/css/desktop.css" />
-        @yield('head')
+        @_yield('head')
     </head>
     <body>
 
@@ -18,7 +18,7 @@
 
         <div id="container">
 
-            @yield('content')
+            @_yield('content')
 
         </div>
 
@@ -26,6 +26,6 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/js/mustache.js"></script>
 
-        @yield('foot')
+        @_yield('foot')
     </body>
 </html>
